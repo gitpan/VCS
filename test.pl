@@ -1,22 +1,13 @@
-# Before `make install' is performed this script should be runnable with
-# `make test'. After `make install' it should work as `perl test.pl'
+#!perl
+use strict;
+use Test::More tests => 24;
 
-######################### We start with some black magic to print on failure.
-
-# Change 1..1 below to 1..last_test_to_print .
-# (It may become useful if the test is moved to ./t subdirectory.)
-
-BEGIN { $| = 1; print "1..12\n"; }
-END {print "not ok 1\n" unless $loaded;}
-use VCS;
-$loaded = 1;
-print "ok 1\n";
-
-######################### End of black magic.
+BEGIN { use_ok( 'VCS' ) }
 
 require Data::Dumper;
 my @segments = VCS->parse_url('vcs://localhost/VCS::Cvs/file/path/?query=1');
-print "not " unless Data::Dumper::Dumper(\@segments) eq <<'EOF';
+
+my $dd=<<'EOF';
 $VAR1 = [
           'localhost',
           'VCS::Cvs',
@@ -24,15 +15,16 @@ $VAR1 = [
           'query=1'
         ];
 EOF
-print "ok 2\n";
+is(Data::Dumper::Dumper(\@segments),$dd,'Parse URL');
+
 
 my $td = "/tmp/vcstestdir.$$";
-test_rcs($td, 3); # goes up to 7
-test_cvs($td, 8); # goes up to 12
+test_rcs($td);
+test_cvs($td);
 
-# inputs: test directory, next test number to output
+
 sub test_cvs {
-    my ($td, $test_num) = @_;
+    my ($td) = @_;
     my $tf = "/tmp/vcstestarc.$$.uue";
     my $repository = "$td/repository";
     my $sandbox = "$td/sandbox";
@@ -59,32 +51,33 @@ uudecode -o /dev/stdout $tf | tar zxf -
 rm $tf
 cd $sandbox
 cvs -Q co td
+cd td/dir
+cvs -Q tag mytag1 file
+cvs -Q tag mytag2 file
+cd ../..
 EOF
+
     my $f = VCS::File->new("$base_url/dir/file");
-    print "not " unless defined $f;
-    print "ok $test_num\n"; $test_num++;
+    ok(defined $f,'VCS::File->new');
+
+    my $h = $f->tags();
+    is($h->{mytag1},'1.2','file tags 1');
+    is($h->{mytag2},'1.2','file tags 2');
 
     my @versions = $f->versions;
-    print "not " unless @versions;
-    print "ok $test_num\n"; $test_num++;
-
+    ok(scalar(@versions),'versions');
     my ($old, $new) = @versions;
-    print "not " unless 
-        $old->version eq '1.1' and
-        $new->version eq '1.2' and
-        $new->date eq '2001/11/13 04:10:29' and
-        $new->author eq 'user';
-    print "ok $test_num\n"; $test_num++;
+    is($old->version(),'1.1','old version');
+    is($new->version(),'1.2','new version');
+    is($new->date(),'2001/11/13 04:10:29','date');
+    is($new->author(),'user','author');
 
     my $d = VCS::Dir->new("$base_url/dir");
-    print "not " unless defined $d;
-    print "ok $test_num\n"; $test_num++;
+    ok (defined($d),'Dir');
 
     my @c = $d->content;
-    print "not "
-        unless @c == 1
-        and $c[0]->url eq "$base_url/dir/file";
-    print "ok $test_num\n"; $test_num++;
+    is(scalar(@c),1,'content');
+    is($c[0]->url(),"$base_url/dir/file",'cotent url');
 
     system <<EOF;
 [ -d $td ] && rm -rf $td
@@ -115,32 +108,32 @@ mkdir $td || exit 1
 cd $td
 uudecode -o /dev/stdout $tf | tar zxf -
 rm $tf
+cd dir
+rcs -q -nmytag1: file 
+rcs -q -nmytag2: file 
 EOF
+
     my $f = VCS::File->new("$base_url/dir/file");
-    print "not " unless defined $f;
-    print "ok $test_num\n"; $test_num++;
+    ok(defined $f,'VCS::File->new');
+
+    my $h = $f->tags();
+    is($h->{mytag1},'1.2','file tags 1');
+    is($h->{mytag2},'1.2','file tags 2');
 
     my @versions = $f->versions;
-    print "not " unless @versions;
-    print "ok $test_num\n"; $test_num++;
-
+    ok(scalar(@versions),'versions');
     my ($old, $new) = @versions;
-    print "not " unless 
-        $old->version eq '1.1' and
-        $new->version eq '1.2' and
-        $new->date eq '2001/11/13 04:10:29' and
-        $new->author eq 'user';
-    print "ok $test_num\n"; $test_num++;
+    is($old->version(),'1.1','old version');
+    is($new->version(),'1.2','new version');
+    is($new->date(),'2001/11/13 04:10:29','date');
+    is($new->author(),'user','author');
 
     my $d = VCS::Dir->new("$base_url/dir");
-    print "not " unless defined $d;
-    print "ok $test_num\n"; $test_num++;
+    ok (defined($d),'Dir');
 
     my @c = $d->content;
-    print "not "
-        unless @c == 1
-        and $c[0]->url eq "$base_url/dir/file";
-    print "ok $test_num\n"; $test_num++;
+    is(scalar(@c),1,'content');
+    is($c[0]->url(),"$base_url/dir/file",'cotent url');
 
     system <<EOF;
 [ -d $td ] && rm -rf $td

@@ -28,6 +28,9 @@ sub url {
     $self->{URL};
 }
 
+sub tags {
+}
+
 sub versions {
 }
 
@@ -91,6 +94,12 @@ C<$url> is a file URL.  Returns an object of class C<VCS::File>, or
 throws an exception if it fails. Normally, an override of this method
 will call C<VCS::File-E<gt>init($url)> to make an object, and then add
 to it as appropriate.
+
+=head2 VCS::File-E<gt>tags()
+
+Returns a reference to a hash that has keys that are any tags attached
+to the file and the values are the corresponding versions which the
+tags refer to.
 
 =head2 VCS::File-E<gt>init($url)
 

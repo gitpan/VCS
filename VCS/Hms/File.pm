@@ -32,4 +32,19 @@ sub versions {
     map { VCS::Hms::Version->new("$self->{URL}/$rev_head.$_") } @revs;
 }
 
+# UNTESTED!
+sub tags {
+    my $self = shift;
+    my ($header, $log) = $self->_split_log($self->{VERSION});
+    my $header_info = $self->_parse_log_header($header);
+    my $tags_hash = {};
+    my $tag_text = $header_info->{'symbolic names'};
+    $tag_text =~ s#^\s+##gm;
+    map {
+        my ($tag, $rev) = split /:\s*/;
+        $tags_hash->{$tag}=$rev;
+    } split /\n/, $tag_text;
+    return $tags_hash;
+}
+
 1;
