@@ -6,7 +6,7 @@ use VCS::Cvs::Dir;
 use VCS::Cvs::File;
 use VCS::Cvs::Version;
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 my $LOG_CMD = "cvs log";
 
@@ -22,16 +22,15 @@ sub _boiler_plate_info {
 sub _split_log {
     my ($self, $version) = @_;
     my $log_text;
-    $version = "" unless defined $version;
-    my $cache_id = $self->name . '/' . $version;
+    my $cache_id = $self->name;
     unless (defined($log_text = $LOG_CACHE{$cache_id})) {
         my $cmd =
             $LOG_CMD .
-            (defined $version ? " -r$version" : '') .
-            " $self->{NAME} |";
+            " $self->{NAME} 2>/dev/null |";
         $LOG_CACHE{$cache_id} = $log_text = $self->_read_pipe($cmd);
     }
     my @sections = split /\n[=\-]+\n/, $log_text;
+    @sections = ($sections[0], grep {/^revision $version\n/} @sections) if $version;
 #map { print "SEC: $_\n" } @sections;
     @sections;
 }
@@ -52,6 +51,9 @@ sub _parse_log_rev {
 
 sub _parse_log_header {
     my ($self, $text) = @_;
+    $text =~ s#(description:.*)##s;
+    my $desc = join "\n ", split /\n/, $1;
+    $text .= $desc;
     my @parts = $text =~ /^(\S.*?)(?=^\S|\Z)/gms;
     chomp @parts;
 #map { print "PART: $_\n" } @parts;
@@ -69,6 +71,7 @@ sub _read_pipe {
     local $/ = undef;
     my $contents = <PIPE>;
     close PIPE;
+    $contents = '' unless defined $contents;
     return $contents;
 }
 

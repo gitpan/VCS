@@ -12,7 +12,7 @@ sub BEGIN {
         die "Couldn't do $configfile: $!" unless defined $return;
         die "Couldn't run $configfile" unless $return;
     }
-}    
+}
 
 use strict;
 no strict 'vars';
@@ -72,6 +72,15 @@ sub choose_project {
     print "</table></ul><p><hr noshade>";
 }
 
+sub html_encode {
+    my $line = shift;
+    $line =~ s|&|&amp;|g;
+    $line =~ s|\>|&gt;|g;
+    $line =~ s|\<|&lt;|g;
+    $line =~ s| |\&nbsp;|g;
+    $line;
+}
+
 sub diff {
     my($q, $base, $what) = @_;
     my $file = $base . $what;
@@ -87,25 +96,98 @@ sub diff {
     my $toobj = VCS::Version->new($file, $toversion);
     print qq|Differences from <b>Revision $fromversion</b> to <b>Revision $toversion</b>...<p>
         <table border=0 cellspacing=0 cellpadding=1>|;
-    my($oldline, $newline, $line);
-    my(@left, @right, $state);
-    $state = "dump";
-    foreach $line (split "\n", $fromobj->diff($toobj)) {
-        ($oldline,$newline) = $line =~ /@@ \-(\d+).*\+(\d+).*@@/;
-        $line =~ s|&|&amp;|g;
-        $line =~ s|\>|&gt;|g;
-        $line =~ s|\<|&lt;|g;
-        $line =~ s| |\&nbsp;|g;
+
+    foreach my $diffref (parse_diff($fromobj->diff($toobj))) {
+        print qq|<tr><td align=center bgcolor="#ccccff">...Line $diffref->{'oldline'}...</td>|;
+        print qq|<td bgcolor="#ffffff">&nbsp;</td>|;
+        print qq|<td align=center bgcolor="#ccccff">...Line $diffref->{'newline'}...</td></tr>|;
+        foreach my $difflineref (@{$diffref->{'difflines'}}) {
+            my $old = html_encode($difflineref->{'old'});
+            my $new = html_encode($difflineref->{'new'});
+            if ($old eq $new) {     # Line has not changed
+                print qq|<tr><td><tt><small>$old</small></tt></td>|;
+                print qq|<td bgcolor="#ffffff">&nbsp;</td>|;
+                print qq|<td><tt><small>$new</small></tt></td></tr>\n|;
+            } elsif ($old eq '') {  # Line has been added
+                print qq|<tr><td></td>|;
+                print qq|<td bgcolor="#ffffff">&nbsp;</td>|;
+                print qq|<td bgcolor="#ccffcc"><tt><small>$new</small></tt></td></tr>\n|;
+            } elsif ($new eq '') {  # Line has been deleted
+                print qq|<tr><td bgcolor="#ffcccc"><tt><small>$old</small></tt></td>|;
+                print qq|<td bgcolor="#ffffff">&nbsp;</td>|;
+                print qq|<td>&nbsp;</td></tr>\n|;
+            } else {                # Line has been modified
+                print qq|<tr><td bgcolor="#ffffbb"><tt><small>$old</small></tt></td>|;
+                print qq|<td bgcolor="#ffffff">&nbsp;</td>|;
+                print qq|<td bgcolor="#ffffbb"><tt><small>$new</small></tt></td></tr>\n|;
+            }
+        }
+        print "<p>";
+    }
+    print "</table></ul>";
+    print "<p><hr><p>";
+}
+
+# parse_diff takes a unified diff and returns a list of \%diff
+#  %diff holds oldline=>num, newline=>num, difflines=>\list of \%difflines
+#  %difflines holds old=>text, new=>text
+# It still needs the "flush" subroutine, just below
+#
+# And example structure follows, with one changed line (1), one empty
+# line which has not changed (2), one added line (3), and one deleted
+# line (15)
+#
+# (
+#   {
+#     'oldline' => 1,
+#     'newline' => 1,
+#     'difflines' => (
+#                       {
+#                         'old' => '# This is version 1.12',
+#                         'new' => '# This is version 1.13'
+#                       },
+#                       {
+#                         'old' => '',
+#                         'new' => ''
+#                       },
+#                       {
+#                         'old' => '',
+#                         'new' => 'use DBI;'
+#                       }
+#                     )
+#   },
+#   {
+#     'oldline' => 15,
+#     'newline' => 16,
+#     'difflines' => (
+#                       {
+#                         'old' => 'use strict;',
+#                         'new' => ''
+#                       },
+#                    )
+#   }
+# )
+sub parse_diff {
+    my $diff_text = shift;
+    my(@left, @right);
+    my @difflist; # this holds a list of \%diff
+    my $state = "dump";
+    my @difflines;
+    foreach my $line (split "\n", $diff_text) {
+        my ($oldline,$newline) = $line =~ /@@ \-(\d+).*\+(\d+).*@@/;
         if ($oldline) {
-            print qq|<tr><td align=center bgcolor="#ccccff">...Line $oldline...</td>|;
-	    print qq|<td bgcolor="#ffffff">&nbsp;</td>|;
-            print qq|<td align=center bgcolor="#ccccff">...Line $newline...</td></tr>|;
-            undef $oldline;
+            if (@difflist) {
+                $difflist[-1]->{'difflines'} = [ @difflines ];
+                @difflines = ();
+            }
+            push @difflist, {
+                oldline => $oldline,
+                newline => $newline,
+                difflines => \@difflines,
+            };
         } elsif ($line =~ s|^\+||) {
             if ($state eq "dump") {
-                print qq|<tr><td></td>|;
-		print qq|<td bgcolor="#ffffff">&nbsp;</td>|;
-                print qq|<td bgcolor="#ccffcc"><tt>$line</tt></td></tr>\n|;
+                push @difflines, { old => '', new => $line };
             } else {
                 $state = "PreChange";
                 push @right, $line;
@@ -115,46 +197,28 @@ sub diff {
             push @left, $line;
         } elsif ($line =~ m|^\\|) {
         } else {
-            flush(\@left, \@right, $state);
+            if ($state eq "PreChangeRemove") {
+                push @difflines, map { { old => $_, new => '' } } @left;
+            } elsif ($state eq "PreChange") {
+                for (my $j = 0; $j < @left || $j < @right ; $j++) {
+                    push @difflines, {
+                        old => ($j < @left ? $left[$j] : ''),
+                        new => ($j < @right ? $right[$j] : ''),
+                    };
+                }
+            }
+            @left = ();
+            @right = ();
             $state = "dump";
-            $line =~ s|&nbsp;| |g;
             $line =~ s|^.||;
-            $line =~ s| |&nbsp;|g;
-            print qq|<tr><td><tt>$line</tt></td>|;
-	    print qq|<td bgcolor="#ffffff">&nbsp;</td>|;
-            print qq|<td><tt>$line</tt></td></tr>\n|;
+            push @difflines, { old => $line, new => $line };
         }
     }
-    flush(\@left, \@right, $state), 
-    print "</table></ul>";
-}
-
-sub flush {
-    my($leftref, $rightref, $state) = @_;
-    my($j);
-    if ($state eq "PreChangeRemove") { 
-        foreach (@$leftref) {
-            print qq|<tr><td bgcolor="#ffcccc"><tt>$_</tt></td>|;
-	    print qq|<td bgcolor="#ffffff">&nbsp;</td>|;
-            print qq|<td>&nbsp;</td></tr>\n|;
-        }
-    } elsif ($state eq "PreChange") {
-        for ($j = 0; $j < (@$leftref) || $j < (@$rightref) ; $j++) {
-            if ($j < (@$leftref)) {
-                print qq|<tr><td bgcolor="#ffffbb"><tt>@$leftref[$j]</tt></td>|;
-            } else {
-                print qq|<tr><td>&nbsp;</td>|;
-            }
-	    print qq|<td bgcolor="#ffffff">&nbsp;</td>|;
-            if ($j < (@$rightref)) {
-                print qq|<td bgcolor="#ffffbb"><tt>@$rightref[$j]</tt></td></tr>\n|;
-            } else {
-                print qq|<td>&nbsp;</td></tr>\n|;
-            }
-        }
+    if (@difflist) {
+        my @newdifflines = @difflines;
+        $difflist[-1]->{'difflines'} = \@newdifflines;
     }
-    @$leftref = ();
-    @$rightref = ();
+    @difflist;
 }
 
 sub show {
@@ -181,7 +245,7 @@ sub show {
         $author = $version->author;
         $tags = join ", ", sort $version->tags;
         $date = $version->date;
-        $reason = $version->reason;
+        $reason = html_encode($version->reason);
         $reason =~ s|\n|<br>|g;
         $diffversion = (@diffversions) ? (shift @diffversions)->version : "";
         $q->param('to', $number);
@@ -212,11 +276,11 @@ sub dir {
     <tr><td bgcolor="#000000"><img src="folder.gif"> <b><font color="#ffffff">/$what</font></b><p></td></tr>
     |;
     my $bgcol = "#ffffff";
-    my $d = VCS::Dir->new($dir); 
+    my $d = VCS::Dir->new($dir);
     unless (defined $d) {
         print "</table><p>Not a VCS dir!</ul>";
         return;
-    }    
+    }
     foreach $thing ($d->content) {
         next unless ref($thing);
         $file = $thing->name;

@@ -8,7 +8,7 @@ use VCS::Dir;
 use VCS::File;
 use VCS::Version;
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 sub implementations {
     my $class = shift;
@@ -87,6 +87,10 @@ In general, implementation classes' C<new> methods must be careful not
 to return "false positives", by rigorously checking if their arguments
 conform to their particular version control system.
 
+If a method, or an argument to a method makes no sense for a particular
+implementation, then the implementation may ignore it, but must do so
+quietly.
+
 =head1 METHODS
 
 =head2 VCS->implementations
@@ -103,15 +107,24 @@ also to set the default or control the order of implementations tried.
 
 =head1 AVAILABILITY 
 
-VCS.pm and its friends will initially be available from 
-http://www.astray.com/VCS/ and later from CPAN.
+VCS.pm and its friends will be available from CPAN.
+
+=head1 MAILING LIST
+
+There is currently a mailing list about VCS.
+
+To subscribe, send a blank message to: vcs-subscribe@astray.com.
+To talk, send a message to: vcs@astray.com.
+To unsubscribe, send a blank message to: vcs-unsubscribe@astray.com.
+
+General queries should be made directly to the mailing list.
 
 =head1 COPYRIGHT 
 
-Copyright (c) 1998 Leon Brocard. All rights reserved. This program is free 
+Copyright (c) 1998/9 Leon Brocard. All rights reserved. This program is free 
 software; you can redistribute it and/or modify it under the same terms
 as Perl itself. 
 
 =head1 SEE ALSO
 
-L<VCS::Cvs>, L<VCS::Dir>, L<VCS::File>, L<VCS::Version>.
+L<VCS::Cvs>, L<VCS::Dir>, L<VCS::File>, L<VCS::Rcs>, L<VCS::Version>.

@@ -1,5 +1,13 @@
 Revision history for Perl extension VCS.
 
+0.02  Mon Feb 22 17:11:06 1999
+        - lots of bugfixes and documentation
+	  updates and clarifications
+        - fixed bug in the caching which meant
+	  that we got almost no misse
+	- fixed bug which caused us to do nasty
+	  things if VCS::Rcs saw any locked files
+
 0.01  Mon Nov 16 12:41:10 1998
 	- first released version, with powerful
           vcsweb.cgi tool

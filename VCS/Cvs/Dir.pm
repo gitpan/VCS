@@ -26,20 +26,17 @@ sub name {
 
 sub content {
     my $self = shift;
-    opendir(DIR, $self->name);
-    my @return = grep {
-        (!/^\./) && (!/^CVS$/) && (-f $self->name . $_ || -d  $self->name . $_)
-    } sort readdir(DIR);
-    @return = map {
-        my $name = $self->name . $_;
-        if (-d $name) {
-            VCS::Cvs::Dir->new($name)
-        } else {
-            VCS::Cvs::File->new($name)
-        }
-    } @return;
-    closedir DIR;
-    return @return;
+    my($entry, $type, $path, $obj, @return);
+    open(CONTENTS, $self->name . 'CVS/Entries');
+    while (defined($entry = <CONTENTS>)) {
+	($type, $path) = $entry =~ m|^([^/]*)/([^/]*)/|;
+	$path = $self->name . $path;
+	$obj = ($type eq 'D') ? VCS::Cvs::Dir->new($path) 
+                              : VCS::Cvs::File->new($path);
+	push @return, $obj if $obj;	    
+    }
+    close CONTENTS;
+    return sort {$a->name cmp $b->name} @return;
 }
 
 1;

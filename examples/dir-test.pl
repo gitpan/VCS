@@ -14,6 +14,7 @@ Usage: $0 dir
     or $0 -recurse dir
 EOF
 
+$dir =~ s#/*$##;
 chdir dirname $dir;
 $dir = basename $dir;
 
@@ -23,6 +24,10 @@ sub show {
     my($dir, $depth) = @_;
 #warn "show: $dir, $depth\n";
     my $d = VCS::Dir->new($dir);
+    unless (defined $d) {
+        print "Not a VCS::Dir: $dir\n";
+        return;
+    }
 #warn "got: $d\n";
     disp($d, $depth);
     foreach my $x ($d->content) {
@@ -36,6 +41,7 @@ sub show {
 
 sub disp {
     my ($obj, $depth) = @_;
+#warn "HERE\n";
     print
         "\t" x $depth,
         $obj->name,

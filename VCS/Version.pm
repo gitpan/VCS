@@ -43,7 +43,7 @@ __END__
 
 =head1 NAME
 
-VCS::Version - module for access to a CVS version
+VCS::Version - module for access to a VCS version
 
 =head1 SYNOPSIS
 
@@ -65,18 +65,19 @@ control.
 
 Methods marked with a "*" are not yet finalised/implemented.
 
-=head2 VCS::Version->create_new($version_args) *
+=head2 VCS::Version->create_new(@version_args) *
 
-C<$version_args> is a hash-ref, with contents as follow:
+C<@version_args> is a list which will be treated as a hash, with
+contents as follow:
 
-    $version_args = {
+    @version_args = (
         name    => 'a file name',
         version => 'an appropriate version identifier',
         tags    => [ 'A_TAG_NAME', 'SECOND_TAG' ],
         author  => 'the author name',
         reason  => 'the reason for the checkin',
         text    => 'either literal text, or a ref to the filename',
-    };
+    );
 
 This is a pure virtual method, which must be over-ridden, and cannot be
 called directly in this class (a C<die> will result).

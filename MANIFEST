@@ -1,3 +1,4 @@
+BUGS
 Changes
 MANIFEST
 Makefile.PL
@@ -15,6 +16,7 @@ VCS/Rcs/File.pm
 VCS/Rcs/Version.pm
 VCS/Version.pm
 examples/diff-hist
+examples/diff-releases
 examples/dir-test.pl
 examples/vcsweb/file.gif
 examples/vcsweb/folder.gif

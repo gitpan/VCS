@@ -62,7 +62,7 @@ sub diff {
             $DIFF_CMD,
             (map { "-r$_" } $self->version, $other->version),
             $self->name,
-            ' |';
+            ' 2>/dev/null|';
         $text = $self->_read_pipe($cmd);
         $text =~ s#.*^diff.*?\n##ms;
 #print "cmd: $cmd gave $text\n";

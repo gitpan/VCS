@@ -14,15 +14,6 @@ SYNOPSIS
                 ;
         }
 
-INSTALLATION
-    You install VCS, as you would install any perl module library,
-    by running these commands:
- 
-    perl Makefile.PL
-    make
-    make test
-    make install
-
 DESCRIPTION
     `VCS' is an API for abstracting access to all version control
     systems from Perl code. This is achieved in a similar fashion to
@@ -48,6 +39,10 @@ DESCRIPTION
     if their arguments conform to their particular version control
     system.
 
+    If a method, or an argument to a method makes no sense for a
+    particular implementation, then the implementation may ignore
+    it, but must do so quietly.
+
 METHODS
   VCS->implementations
 
@@ -64,15 +59,23 @@ METHODS
     implementations tried.
 
 AVAILABILITY
-    VCS.pm and its friends will initially be available from
-    http://www.astray.com/VCS/ and later from CPAN.
+    VCS.pm and its friends will be available from CPAN.
+
+MAILING LIST
+    There is currently a mailing list about VCS.
+
+    To subscribe, send a blank message to: vcs-subscribe@astray.com.
+    To talk, send a message to: vcs@astray.com. To unsubscribe, send
+    a blank message to: vcs-unsubscribe@astray.com.
+
+    General queries should be made directly to the mailing list.
 
 COPYRIGHT
-    Copyright (c) 1998 Leon Brocard. All rights reserved. This
+    Copyright (c) 1998/9 Leon Brocard. All rights reserved. This
     program is free software; you can redistribute it and/or modify
     it under the same terms as Perl itself.
 
 SEE ALSO
     the VCS::Cvs manpage, the VCS::Dir manpage, the VCS::File
-    manpage, the VCS::Version manpage.
+    manpage, the VCS::Rcs manpage, the VCS::Version manpage.
 

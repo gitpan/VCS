@@ -25,7 +25,7 @@ __END__
 
 =head1 NAME
 
-VCS::Dir - module for access to a CVS directory
+VCS::Dir - module for access to a VCS directory
 
 =head1 SYNOPSIS
 
