@@ -1,6 +1,5 @@
 BUGS
 Changes
-Imp_pod.tpl
 MANIFEST
 Makefile.PL
 README
@@ -29,7 +28,9 @@ examples/vcsweb/folder.gif
 examples/vcsweb/vcsweb.cgi
 examples/vcsweb/vcsweb.ini
 examples/version-test
-t/VCS.t
+t/00VCS.t
+t/01Rcs.t
+t/01Cvs.t
 t/rcs_testfiles/dir/file
 t/rcs_testfiles/dir/RCS/file,v
 t/cvs_testfiles/td/dir/file,v

@@ -1,16 +1,14 @@
 package VCS::Rcs;
 
 use strict;
-use vars qw($VERSION);
+use vars qw($VERSION $LOG_CMD %LOG_CACHE);
 use VCS::Rcs::Dir;
 use VCS::Rcs::File;
 use VCS::Rcs::Version;
 
-$VERSION = '0.05';
+$VERSION = '0.06';
 
-my $LOG_CMD = "rlog";
-
-my %LOG_CACHE;
+$LOG_CMD = "rlog";
 
 sub _boiler_plate_info {
     my ($self, $what) = @_;
@@ -89,7 +87,7 @@ VCS::Rcs - notes for the rcs implementation
 
 =head1 DESCRIPTION
 
-Currently, the user needs to ensure that their environment has the 
+Currently, the user needs to ensure that their environment has the
 B<rcs> toolset available, including B<rlog>, B<rcsdiff>, B<co>, et al.
 On Unix like environments ensure that the C<$PATH> environment variable
 has the appropriate directory listed.  On Windows be sure that the C<%PATH%>
@@ -101,9 +99,9 @@ VCS::Rcs is currently part of the main VCS distribution.
 
 =head1 COPYRIGHT
 
-Copyright (c) 1998-2001 Leon Brocard. All rights reserved. This
-program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
+Copyright (c) 1998-2003 Leon Brocard & Greg McCarroll. All rights
+reserved. This program is free software; you can redistribute it
+and/or modify it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 

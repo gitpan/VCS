@@ -2,10 +2,12 @@ package VCS::Rcs::Version;
 
 use File::Basename;
 
+use vars qw(@ISA $DIFF_CMD $UPDATE_CMD);
+use strict;
 @ISA = qw(VCS::Rcs VCS::Version);
 
-my $DIFF_CMD = "rcsdiff -u2";
-my $UPDATE_CMD = "co -p";
+$DIFF_CMD = "rcsdiff -u2";
+$UPDATE_CMD = "co -p";
 
 sub new {
     my ($class, $url) = @_;
@@ -37,7 +39,7 @@ sub tags {
 sub text {
     my $self = shift;
     $self->_read_pipe(
-        "$UPDATE_CMD -r$self->{VERSION} $self->{NAME} 2>/dev/null |"
+        "$UPDATE_CMD -r$self->{VERSION} $self->{PATH} 2>/dev/null |"
     );
 }
 

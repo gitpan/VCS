@@ -1,5 +1,20 @@
 Revision history for Perl extension VCS.
 
+0.09  Sun Jan 19 13:12:39 GMT 2003
+	- Applied patch from Slaven Rezic (Thanks Slaven!), which ...
+		- cleaned up the _CMD variables making them global
+		- %LOG_CACHE also global (this allows a quick hack
+		  to invalidate the CACHE)
+		- use strict applied to VCS::Rcs::Version
+		- text() now uses PATH instead of NAME
+	- Broke out the tests into seperate files for General (00VCS.t),
+	  RCS (01Rcs.t) and CVS (01Cvs.t)
+	- Removed dependency on the UNIX command line tools for making
+	  a test directory. 
+	- Added skips for 01Rcs.t and 01Cvs.t if rcs or cvs are not
+	  available.
+	- Made the testing system a little more Win32 friendly.	 
+
 0.08  Thu Jan 16 16:19:37 GMT 2003
 	- Added a tags() method to VCS::Dir (see POD for more details), 
 	  there are currently only tests for this function in the CVS
