@@ -29,4 +29,8 @@ examples/vcsweb/folder.gif
 examples/vcsweb/vcsweb.cgi
 examples/vcsweb/vcsweb.ini
 examples/version-test
-test.pl
+t/VCS.t
+t/rcs_testfiles/dir/file
+t/rcs_testfiles/dir/RCS/file,v
+t/cvs_testfiles/td/dir/file,v
+

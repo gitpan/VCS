@@ -9,7 +9,7 @@ use VCS::File;
 use VCS::Version;
 use URI;
 
-$VERSION = '0.06';
+$VERSION = '0.07';
 
 sub parse_url {
     # vcs://hostname/classname/...
@@ -119,7 +119,7 @@ interface is subject to change.
 
 =head1 VCS::* METHODS
 
-Please refer to the documentation for L<VCS::Dir>, L<VCS::File>, 
+Please refer to the documentation for L<VCS::Dir>, L<VCS::File>,
 and L<VCS::Version>; as well as the implementation specific documentation
 as in L<VCS::Cvs>, L<VCS::Rcs>.
 
