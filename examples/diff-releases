@@ -161,7 +161,7 @@ sub add {
     } elsif ($latex) {
         print qq#\\hline\n# if $n;
         $r =~ s|([/_>\&{}])|\\verb-$1-|g;
-        $r =~ s|([\'])|\$$1\$|g;
+        $r =~ s|(['])|\$$1\$|g;
         $n =~ s|([/_>\&{}])|\\verb-$1-|g;
         print qq#\\small{\\tt{$n}} & $v & $d & \\emph{$a} & $r \\\\#;
     } else {

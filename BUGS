@@ -9,6 +9,8 @@ example:
     libraries, while it should probably be inside
     the Rcs::File and Cvs::File libraries.
     
+  o Caching doesn't work for long-lived processes.
+    
   o vcsweb.cgi does not run correctly with tainting
   
 But hopefully that's about it ;-)

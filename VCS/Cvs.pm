@@ -76,3 +76,35 @@ sub _read_pipe {
 }
 
 1;
+
+
+__END__
+
+=head1 NAME
+
+VCS::Cvs - implementation notes for CVS implementation
+
+=head1 SYNOPSIS
+
+    $ENV{CVSROOT} = '/cvsroot';
+    use VCS;
+    $file = VCS::File->new('/source/cvsrepos/project/Makefile');
+
+=head1 DESCRIPTION
+
+Currently, the user needs to ensure that the environmental requirements
+for CVS command line tools are satisfied.
+
+=head1 AVAILABILITY 
+
+VCS::Cvs is currently part of the main VCS distribution.
+
+=head1 COPYRIGHT 
+
+Copyright (c) 1998-9 Leon Brocard. All rights reserved. This program is free 
+software; you can redistribute it and/or modify it under the same terms
+as Perl itself. 
+
+=head1 SEE ALSO
+
+L<VCS>.

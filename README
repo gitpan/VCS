@@ -79,3 +79,9 @@ SEE ALSO
     the VCS::Cvs manpage, the VCS::Dir manpage, the VCS::File
     manpage, the VCS::Rcs manpage, the VCS::Version manpage.
 
+CHANGES FROM 0.02
+    Documentation, mostly. Caching still doesn't work with
+    long-lived processes.
+
+    
+			

@@ -8,7 +8,7 @@ use VCS::Dir;
 use VCS::File;
 use VCS::Version;
 
-$VERSION = '0.02';
+$VERSION = '0.03';
 
 sub implementations {
     my $class = shift;
@@ -16,6 +16,13 @@ sub implementations {
     my @impls = _find_implementations(@INC);
     $class->add_implementations(@impls);
     @IMPLEMENTATIONS;
+}
+
+sub _class2file {
+    my $class = shift;
+    $class =~ s#::#/#g;
+    $class .= '.pm';
+    $class;
 }
 
 sub _find_implementations {
@@ -29,6 +36,8 @@ sub _find_implementations {
         } grep {
             !/$CONTAINER_PAT\.pm$/
         } glob "$search_dir/VCS/*.pm"
+    } grep {
+        -d "$_/VCS"
     } @_;
     @impls;
 }
@@ -38,7 +47,7 @@ sub add_implementations {
     # first, strip out all occurrences of these from the existing list
     my %mask = map { ($_ => 1) } @implementations;
     @IMPLEMENTATIONS = grep { !$mask{$_} } @IMPLEMENTATIONS;
-    map { eval "require $_" || die } @implementations;
+    map { require(_class2file($_)) } @implementations;
     unshift @IMPLEMENTATIONS, @implementations;
 }
 
@@ -86,6 +95,10 @@ implementation classes corresponding to the container classes.
 In general, implementation classes' C<new> methods must be careful not
 to return "false positives", by rigorously checking if their arguments
 conform to their particular version control system.
+
+Implementation classes must include documentation for their special
+requirements, such as mandatory environment variables. See L<VCS::Cvs>
+for an example.
 
 If a method, or an argument to a method makes no sense for a particular
 implementation, then the implementation may ignore it, but must do so
