@@ -1,0 +1,55 @@
+#!/usr/bin/perl
+
+$| = 1;
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use VCS;
+
+foreach my $arg (@ARGV) {
+    my $file = VCS::File->new($arg);
+    my @versions = $file->versions;
+    my @diff_pairs;
+    for (my $count = @versions - 1; $count > 0; $count--) {
+        push @diff_pairs, [ $versions[$count - 1], $versions[$count] ];
+    }
+    map {
+        my $old = $_->[0];
+        my $new = $_->[1];
+        print
+            '*** Changes from version ',
+            $old->version,
+            ' to version ',
+            $new->version,
+            ' (',
+            $new->date,
+            ")\n",
+            'What: ', $new->name, "\n",
+            'Version: ', $new->version, "\n",
+            'When: ', $new->date, "\n",
+            'Who: ', $new->author, "\n",
+            'Tags: ', (join "\n      ", $new->tags), "\n",
+            'Why: ', (join "\n     ", $new->reason), "\n",
+            $old->diff($new)
+    } @diff_pairs;
+}
+
+__END__
+
+=head1 NAME
+
+diff-hist - view revision history of file under version control
+
+=head1 SYNOPSIS
+
+diff-hist file [file...]
+
+=head1 DESCRIPTION
+
+For each file specified, the differences (in diff -u2 format) are shown
+between each successive version back to the first, in reverse
+chronological order.
+
+=head1 SEE ALSO
+
+L<VCS>.

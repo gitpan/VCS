@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use VCS;
+
+die "Usage: $0 file version\n" unless @ARGV == 2;
+
+my $version = VCS::Version->new(@ARGV);
+
+map {
+    print "\$version->$_ = " . join("\n\t", $version->$_()) . "\n";
+} qw(
+    name
+    version
+    author
+    date
+    reason
+    tags
+    text
+);
