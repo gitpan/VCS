@@ -2,43 +2,30 @@ package VCS::Rcs::Dir;
 
 use Carp;
 
-@ISA = qw(VCS::Rcs);
+@ISA = qw(VCS::Rcs VCS::Dir);
 
 use strict;
 
 sub new {
-    my($proto, $name) = @_;
-    my $class = ref($proto) || $proto;
-    return undef unless (-d $name);
-    $name .= '/' if (substr($name, -1, 1) ne '/');
-    return undef unless -d $name . 'RCS' or glob "$name*,v";
-    my $self = {};
-    $self->{NAME} = $name; # The name of the directory
-    bless $self, $class;
-    return $self;
+    my($class, $url) = @_;
+    my $self = $class->init($url);
+    my $path = $self->path;
+    die "$class->new: $path: $!\n" unless -d $path;
+    die "$class->new: $path not an RCS directory: $!\n"
+        unless -d $path . 'RCS' or glob "$path*,v";
+    $self;
 }
 
-sub name {
-    my $self = shift;
-    $self->{NAME};
-}
-
+# evil assumption - no query string!
 sub content {
     my $self = shift;
-    opendir(DIR, $self->name);
-    my @return = grep {
-        (!/^\./) && (!/^RCS$/) && (-f $self->name . $_ || -d  $self->name . $_)
-    } sort readdir(DIR);
-    @return = map {
-        my $name = $self->name . $_;
-        if (-d $name) {
-            VCS::Rcs::Dir->new($name)
-        } else {
-            VCS::Rcs::File->new($name)
-        }
-    } @return;
-    closedir DIR;
-    return @return;
+    my $base_dir = $self->path;
+    sort map {
+        my $new_class = -d "$base_dir$_" ? 'VCS::Rcs::Dir' : 'VCS::Rcs::File';
+        $new_class->new($self->url . $_);
+    } grep {
+        (!/^RCS$/) && (-f "$base_dir$_" || -d "$base_dir$_")
+    } $self->read_dir($base_dir);
 }
 
 1;

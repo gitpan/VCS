@@ -1,26 +1,22 @@
 package VCS::Rcs::File;
 
-@ISA = qw(VCS::Rcs);
+@ISA = qw(VCS::Rcs VCS::File);
 
 use File::Basename;
 
 sub new {
-#warn "CALL @_\n";
-    my ($class, $name) = @_;
-    return unless -f $name;
-    return unless -d dirname($name) . '/RCS' or -f "$name,v";
-    my $self = {};
-    $self->{NAME} = $name; # The name of the directory
-    bless $self, $class;
-    return unless $self->_split_log;
-    return $self;
+    my ($class, $url) = @_;
+    my $self = $class->init($url);
+    my $path = $self->path;
+    die "$class->new: $path: $!\n" unless -f $path;
+    die "$class->new: $path not in an RCS directory: $!\n"
+        unless -d dirname($path) . '/RCS' or -f "$path,v";
+    die "$class->new: $path failed to split log\n"
+        unless $self->_split_log;
+    $self;
 }
 
-sub name {
-    my $self = shift;
-    $self->{NAME};
-}
-
+# evil assumption - no query strings on URL!
 sub versions {
     my($self, $lastflag) = @_;
     my @rq_version = @_;
@@ -29,10 +25,10 @@ sub versions {
     my $last_rev = $header_info->{'head'};
 #warn "last_rev: $last_rev\n";
     my ($rev_head, $rev_tail) = ($last_rev =~ /(.*)\.(\d+)$/);
-    return VCS::Rcs::Version->new($self->{NAME}, "$rev_head.$rev_tail")
+    return VCS::Rcs::Version->new("$self->{URL}/$rev_head.$rev_tail")
         if defined $lastflag;
     map {
-        VCS::Rcs::Version->new($self->{NAME}, "$rev_head.$_")
+        VCS::Rcs::Version->new("$self->{URL}/$rev_head.$_")
     } (1..$rev_tail);
 }
 

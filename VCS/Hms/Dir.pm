@@ -1,48 +1,28 @@
 package VCS::Hms::Dir;
 
-use Carp;
-
-@ISA = qw(VCS::Hms);
+@ISA = qw(VCS::Hms VCS::Dir);
 
 use strict;
+use Carp;
 
 sub new {
-    my($proto, $name) = @_;
-    my $class = ref($proto) || $proto;
-
-    $name .= '/' if (substr($name, -1, 1) ne '/');
- 
-    # warn "Creating Dir object $name\n";
-    # verify if the HMS directory exists
-    my $result = system("fls $name>/dev/null");
-    return undef if $result != 0 ; 
-
-    my $self = {};
-    $self->{NAME} = $name; # The name of the directory
-    bless $self, $class;
-    return $self;
-}
-
-sub name {
-    my $self = shift;
-    $self->{NAME};
+    my($class, $url) = @_;
+    my $self = $class->init($url);
+    my $path = $self->path;
+    die "$class->new: $path not an HMS directory: $!\n"
+        if system("fls $path >/dev/null") != 0;
+    $self;
 }
 
 sub content {
     my $self = shift;
-    my @fll = split("\n",`fll -l $self->{NAME}`);
-
-    my @result = () ;
-    foreach (@fll)
-      {
-        my ($mode,$lock,$size,$month,$date,$h_y,$name,$locked_rev) = 
-          split /\s+/;
-        if ($mode =~ /^d/) {
-            push @result,VCS::Hms::Dir->new($name);
-        } else {
-            push @result,VCS::Hms::File->new($name);
-        }
-      }
+    my @result;
+    foreach (split "\n",`fll -l $self->{NAME}`) {
+        my ($mode,$lock,$size,$month,$date,$h_y,$name,$locked_rev) =
+            split /\s+/;
+        my $new_class = ($mode =~ /^d/) ? 'VCS::Hms::Dir' : 'VCS::Hms::File';
+        push @result, $new_class->new($self->url . $name);
+    }
     return @result;
 }
 

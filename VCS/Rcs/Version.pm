@@ -1,28 +1,20 @@
 package VCS::Rcs::Version;
 
-@ISA = qw(VCS::Rcs);
+use File::Basename;
+
+@ISA = qw(VCS::Rcs VCS::Version);
 
 my $DIFF_CMD = "rcsdiff -u2";
 my $UPDATE_CMD = "co -p";
 
 sub new {
-    my ($class, $name, $version) = @_;
-    return unless -f $name;
-    my $self = {
-        NAME => $name,
-        VERSION => $version,
-    };
-    bless $self, $class;
-}
-
-sub name {
-    my $self = shift;
-    $self->{NAME};
-}
-
-sub version {
-    my $self = shift;
-    $self->{VERSION};
+    my ($class, $url) = @_;
+    my $self = $class->init($url);
+    my $path = $self->path;
+    die "$class->new: $path: $!\n" unless -f $path;
+    die "$class->new: $path not in an RCS directory: $!\n"
+        unless -d dirname($path) . '/RCS' or -f "$path,v";
+    $self;
 }
 
 sub tags {
@@ -58,7 +50,7 @@ sub diff {
         my $cmd = join ' ',
             $DIFF_CMD,
             (map { "-r$_" } $self->version, $other->version),
-            $self->name,
+            $self->{PATH},
             ' 2>&1 |';
         $text = $self->_read_pipe($cmd);
         $text =~ s#.*^diff.*?\n##ms;

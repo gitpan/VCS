@@ -1,6 +1,21 @@
 Revision history for Perl extension VCS.
 
-0.04  [not yet]
+0.05  Sun Jul 28 01:09:44 BST 2002
+	- VCS URLs, eliminating problems with which kind of VCS to use.
+	- Exceptions on failed calls to "new" instead of returning undef. This
+	  enables calling code to assume it "just worked", and also when it
+	  fails, information is available (from the message) as to just what
+	  went wrong.
+	- An "init" method, callable by "new" in subclasses, cutting down on
+	  redundant code in subclasses.
+	- A "path" method to use instead of "name", which was potentially
+	  ambiguous. The data for this is setup in "init", so subclasses
+	  should not need to touch.
+	- Because of the above, subclasses like e.g. VCS::X::Dir must inherit
+	  from VCS::Dir. If they wish to inherit from VCS::X, they should set
+	  @ISA to qw(VCS::X VCS::Dir).
+
+0.04  Oct 28 2001
         - [now in SourceForge CVS]
         - Added VCS::Hms
 	- Added multitude of changes from Peter Prymmer:

@@ -7,15 +7,19 @@ use vars qw($VERSION);
 use VCS::Dir;
 use VCS::File;
 use VCS::Version;
+use URI;
 
-$VERSION = '0.04';
+$VERSION = '0.05';
 
-sub implementations {
-    my $class = shift;
-    return @IMPLEMENTATIONS if @IMPLEMENTATIONS;
-    my @impls = _find_implementations(@INC);
-    $class->add_implementations(@impls);
-    @IMPLEMENTATIONS;
+sub parse_url {
+    # vcs://hostname/classname/...
+    my ($class, $url) = @_;
+    my $uri = URI->new($url);
+    die "Non-vcs URL '$url' passed!\n" unless $uri->scheme eq 'vcs';
+    my $path = $uri->path;
+    $path =~ s#^/([^/]+)##;
+    my $classname = $1;
+    ($uri->authority, $classname, $path, $uri->query)
 }
 
 sub _class2file {
@@ -25,32 +29,9 @@ sub _class2file {
     $class;
 }
 
-sub _find_implementations {
-    my @impls = map {
-        my $search_dir = $_;
-        map {
-            s#^$search_dir/*##;
-            s#/+#::#g;
-            s#\.pm$##;
-            $_
-        } grep {
-            !/$CONTAINER_PAT\.pm$/
-        } glob "$search_dir/VCS/*.pm"
-    } grep {
-        -d "$_/VCS"
-    } @_;
-    @impls;
-}
-
-sub add_implementations {
-    my ($class, @implementations) = @_;
-    # first, strip out all occurrences of these from the existing list
-    my %mask = map { ($_ => 1) } @implementations;
-    @IMPLEMENTATIONS = grep { !$mask{$_} } @IMPLEMENTATIONS;
-	# drat, VCS::CVS and VCS::PVCS aren't one of ours...
-	@implementations = grep { $_ !~ /CVS|PVCS/ } @implementations;
-    map { require(_class2file($_)) } @implementations;
-    unshift @IMPLEMENTATIONS, @implementations;
+sub class_load {
+    my ($class, $to_load) = @_;
+    require(_class2file($to_load));
 }
 
 1;
@@ -65,7 +46,7 @@ VCS - Library for generic Version Control System access in Perl
 
     use VCS;
     $file = VCS::File->new($ARGV[0]);
-    print $file->name, ":\n";
+    print $file->url, ":\n";
     for $version ($file->versions) {
         print $version->version,
               ' was checked in by ',
@@ -82,11 +63,24 @@ C<VCS::File>, and C<VCS::Version>, and "implementation" classes, such
 as C<VCS::Cvs::Dir>, C<VCS::Cvs::File>, and C<VCS::Cvs::Version>, which
 are subclasses of their respective "container" classes.
 
+The container classes are instantiated with URLs. There is a URL scheme
+for entities under version control. The format is as follows:
+
+    vcs://localhost/VCS::Cvs/fs/path/?query=1
+
+The "query" part is ignored for now. The path must be an absolute path,
+meaningful to the given class. The class is an implementation class,
+such as C<VCS::Cvs>.
+
 The "container" classes work as follows: when the C<new> method of a
-container class is called, it will cycle through each of the known
-implementation classes, trying its C<new> method with the given
-arguments until one returns a defined result, which will then be
-returned.
+container class is called, it will parse the given URL, using the
+C<VCS-E<gt>parse_url> method. It will then call the C<new> of the
+implementation's appropriate container subclass, and return the
+result. For example,
+
+    VCS::Version->new('vcs://localhost/VCS::Cvs/fs/path/file/1.2');
+
+will return a C<VCS::Cvs::Version>.
 
 An implementation class is recognised as follows: its name starts with
 C<VCS::>, and C<require "VCS/Classname.pm"> will load the appropriate
@@ -94,17 +88,34 @@ implementation classes corresponding to the container classes.
 
 =head1 VCS METHODS
 
-=head2 VCS-E<gt>implementations
+=head2 VCS-E<gt>parse_url
 
-Returns a list of the implementations, in the order in which they will
-be tried by the container classes. The first time it is called (as
-determined by whether there are any implementations known), it will
-search @INC for all compliant implementations.
+This returns a four-element list:
 
-=head2 VCS-E<gt>add_implementations(@implementations)
+    ($hostname, $classname, $path, $query)
 
-C<@implementations> is moved/added to the front of the list, so use this
-also to set the default or control the order of implementations tried.
+For example,
+
+    VCS->parse_url('vcs://localhost/VCS::Cvs/fs/path/file/1.2');
+
+will return
+
+    (
+        'localhost',
+        'VCS::Cvs',
+        '/fs/path/file/1.2',
+        ''
+    )
+
+This is mostly intended for use by the container classes, and its
+interface is subject to change.
+
+=head2 VCS-E<gt>class_load
+
+This loads its given implementation class.
+
+This is mostly intended for use by the container classes, and its
+interface is subject to change.
 
 =head1 VCS::* METHODS
 

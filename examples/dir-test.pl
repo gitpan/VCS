@@ -32,7 +32,7 @@ sub show {
     disp($d, $depth);
     foreach my $x ($d->content) {
         if ($opt_recurse && (ref($x) =~ /::Dir$/)) {
-            show($x->name, $depth+1);
+            show($x->path, $depth+1);
         } else {
             disp($x, $depth+1);
         }
@@ -44,7 +44,7 @@ sub disp {
 #warn "HERE\n";
     print
         "\t" x $depth,
-        $obj->name,
+        $obj->path,
         "\t",
         ref($obj),
         "\n",

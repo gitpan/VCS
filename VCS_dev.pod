@@ -12,30 +12,30 @@ is for VCS::* developers, not necessarily for users of VCS itself.
 =head1 DESCRIPTION
 
 C<VCS> is an API for abstracting access to all version control systems
-from Perl code.  This is achieved in a similar fashion to the C<DBI>
-suite of modules.  There are "container" classes, C<VCS::Dir>,
+from Perl code. This is achieved in a similar fashion to the C<DBI>
+suite of modules. There are "container" classes, C<VCS::Dir>,
 C<VCS::File>, and C<VCS::Version>, and "implementation" classes, such
 as C<VCS::Cvs::Dir>, C<VCS::Cvs::File>, and C<VCS::Cvs::Version>, which
 are subclasses of their respective "container" classes.
 
+The container classes are instantiated with URLs. There is a URL scheme
+for entities under version control. The format is as follows:
+
+    vcs://localhost/VCS::Cvs/fs/path/?query=1
+
+The "query" part is ignored for now. The path must be an absolute path,
+meaningful to the given class. The class is an implementation class,
+such as C<VCS::Cvs>.
+
 The "container" classes work as follows: when the C<new> method of a
-container class is called, it will cycle through each of the known
-implementation classes, trying its C<new> method with the given
-arguments until one returns a defined result, which will then be
-returned.
+container class is called, it will parse the given URL, using the
+C<VCS-E<gt>parse_url> method. It will then call the C<new> of the
+implementation's appropriate container subclass, and return the
+result. For example,
 
-As noted in the VCS.pm pod one can use C<VCS-E<gt>implementations> to obtain
-a list of installed implementations like so:
+    VCS::Version->new('vcs://localhost/VCS::Cvs/fs/path/file/1.2');
 
-    #!/usr/local/bin/perl -w
-    use strict;
-    use VCS;
-    my @imps = VCS->implementations();
-    for (@imps) {
-        print "$_";
-    }
-
-One can also prepend new implementations via C<VCS-E<gt>add_implementations>.
+will return a C<VCS::Cvs::Version>.
 
 =head1 Imp IMPLEMENTATION
 
@@ -44,7 +44,8 @@ suppose that there is a need for a VCS::Imp or $Imp implementation.
 
 An implementation class is recognised as follows: its name starts with
 C<VCS::>, and C<require "VCS/Imp.pm"> will load the appropriate
-implementation classes corresponding to the container classes.
+implementation classes corresponding to the container classes -
+C<VCS::Imp::Dir>, C<VCS::Imp::File> and C<VCS::Imp::Version>..
 
 Hence in MANIFEST, or Unix file specificaton, syntax the Imp implementation
 ought to be composed of at least these files:
@@ -57,10 +58,6 @@ ought to be composed of at least these files:
 In addition to the usual module distribution files such as F<MANIFEST>,
 F<Makefile.PL>, etc.
 
-In general, implementation classes' C<new> methods must be careful not
-to return "false positives", by rigorously checking if their arguments
-conform to their particular version control system.
-
 Implementation classes must include documentation for their special
 requirements, such as mandatory environment variables. See L<VCS::Cvs>
 for an example.
@@ -69,8 +66,13 @@ If a method, or an argument to a method makes no sense for a particular
 implementation, then the implementation may ignore it, but must do so
 quietly.
 
-The modules that make up a VCS implementation act as wrappers
-around a command language interpreter (CLI or shell) command.
+The modules that make up a VCS implementation might act as wrappers
+around a command language interpreter (CLI or shell) command, or might
+directly look at files or talk over the network. It is recommended that
+before implementing a VCS::*::* class that implements direct access, the
+developer first implement a version that uses the CLI tools, and writes
+appropriate tests for it. Doing this will ensure that the direct-access
+version, which passes the tests, will be correct.
 
 =over 4
 
@@ -110,7 +112,7 @@ C<sub date {}>, C<sub reason {}>.
 If you prefer there is a pod stub in Imp_pod.tpl that you could
 catenate onto the tail of your F<VCS/$Imp.pm> file, making sure
 to edit the template with C<s/Imp/$Your_VCS_Name/g>.  For simple
-version control system apis (i.e. with a CLI interface and no need 
+version control system APIs (i.e. with a CLI interface and no need 
 for XS, C, or header file worries) an easy way to get started 
 would be to use B<h2xs> like so:
 

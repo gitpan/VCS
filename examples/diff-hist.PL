@@ -56,7 +56,7 @@ foreach my $arg (@ARGV) {
             ' (',
             $new->date,
             ")\n",
-            'What: ', $new->name, "\n",
+            'What: ', $new->path, "\n",
             'Version: ', $new->version, "\n",
             'When: ', $new->date, "\n",
             'Who: ', $new->author, "\n",

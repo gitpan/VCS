@@ -6,7 +6,7 @@ use VCS::Rcs::Dir;
 use VCS::Rcs::File;
 use VCS::Rcs::Version;
 
-$VERSION = '0.04';
+$VERSION = '0.05';
 
 my $LOG_CMD = "rlog";
 
@@ -22,12 +22,12 @@ sub _boiler_plate_info {
 sub _split_log {
     my ($self, $version) = @_;
     my $log_text;
-    my $cache_id = $self->name;
+    my $cache_id = $self->url;
     unless (defined($log_text = $LOG_CACHE{$cache_id})) {
         my $cmd =
             $LOG_CMD .
             (defined $version ? " -r$version" : '') .
-            " $self->{NAME} |";
+            " " . $self->path . " |";
         $LOG_CACHE{$cache_id} = $log_text = $self->_read_pipe($cmd);
     }
     my @sections = split /\n[=\-]+\n/, $log_text;
@@ -67,6 +67,7 @@ sub _parse_log_header {
 
 sub _read_pipe {
     my ($self, $cmd) = @_;
+#use Carp; Carp::cluck "r_p: $cmd\n";
     local *PIPE;
     open PIPE, $cmd;
     local $/ = undef;

@@ -1,6 +1,6 @@
 package VCS::Cvs::Version;
 
-@ISA = qw(VCS::Cvs);
+@ISA = qw(VCS::Cvs VCS::Version);
 
 use File::Basename;
 
@@ -8,24 +8,13 @@ my $DIFF_CMD = "cvs diff -u2";
 my $UPDATE_CMD = "cvs update -p";
 
 sub new {
-    my ($class, $name, $version) = @_;
-    return unless -f $name;
-    return unless -d dirname($name) . '/CVS';
-    my $self = {
-        NAME => $name,
-        VERSION => $version,
-    };
-    bless $self, $class;
-}
-
-sub name {
-    my $self = shift;
-    $self->{NAME};
-}
-
-sub version {
-    my $self = shift;
-    $self->{VERSION};
+    my ($class, $url) = @_;
+    my $self = $class->init($url);
+    my $path = $self->path;
+    die "$class->new: $path: $!\n" unless -f $path;
+    die "$class->new: $path not in a CVS directory: $!\n"
+        unless -d dirname($path) . '/CVS';
+    $self;
 }
 
 sub tags {
@@ -61,7 +50,7 @@ sub diff {
         my $cmd = join ' ',
             $DIFF_CMD,
             (map { "-r$_" } $self->version, $other->version),
-            $self->name,
+            $self->path,
             ' 2>/dev/null|';
         $text = $self->_read_pipe($cmd);
         $text =~ s#.*^diff.*?\n##ms;

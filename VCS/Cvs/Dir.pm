@@ -3,40 +3,33 @@ package VCS::Cvs::Dir;
 use Carp;
 use VCS::Cvs;
 
-@ISA = qw(VCS::Cvs);
+@ISA = qw(VCS::Cvs VCS::Dir);
 
 use strict;
 
 sub new {
-    my($proto, $name) = @_;
-    my $class = ref($proto) || $proto;
-    return undef unless (-d $name);
-    $name .= '/' if (substr($name, -1, 1) ne '/');
-    return undef unless (-d $name . 'CVS');
-    my $self = {};
-    $self->{NAME} = $name; # The name of the directory
-    bless $self, $class;
-    return $self;
-}
-
-sub name {
-    my $self = shift;
-    $self->{NAME};
+    my($class, $url) = @_;
+    my $self = $class->init($url);
+    my $path = $self->path;
+    die "$class->new: $path: $!\n" unless -d $path;
+    die "$class->new: $path not a CVS directory: $!\n"
+        unless -d $path . 'CVS';
+    $self;
 }
 
 sub content {
     my $self = shift;
-    my($entry, $type, $path, $obj, @return);
-    open(CONTENTS, $self->name . 'CVS/Entries');
-    while (defined($entry = <CONTENTS>)) {
-	($type, $path) = $entry =~ m|^([^/]*)/([^/]*)/|;
-	$path = $self->name . $path;
-	$obj = ($type eq 'D') ? VCS::Cvs::Dir->new($path) 
-                              : VCS::Cvs::File->new($path);
-	push @return, $obj if $obj;	    
+    my @return;
+    local *CONTENTS;
+    open(CONTENTS, $self->path . 'CVS/Entries');
+    while (defined(my $entry = <CONTENTS>)) {
+        my ($type, $path) = $entry =~ m|^([^/]*)/([^/]*)/|;
+        next unless $path;
+        my $new_class = ($type eq 'D') ? 'VCS::Cvs::Dir' : 'VCS::Cvs::File';
+        push @return, $new_class->new($self->url . $path);
     }
     close CONTENTS;
-    return sort {$a->name cmp $b->name} @return;
+    return sort { $a->path cmp $b->path } @return;
 }
 
 1;

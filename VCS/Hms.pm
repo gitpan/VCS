@@ -14,7 +14,7 @@ my %LOG_CACHE;
 
 sub _boiler_plate_info {
     my ($self, $what) = @_;
-    my ($header, $log) = $self->_split_log($self->{VERSION});
+    my ($header, $log) = $self->_split_log($self->version);
     my $rev_info = $self->_parse_log_rev($log);
     $rev_info->{$what};
 }
@@ -23,12 +23,12 @@ sub _split_log {
     my ($self, $version) = @_;
     my $log_text;
 
-    my $cache_id = $self->name . '/' . defined $version ? $version : 'all';
+    my $cache_id = $self->path . '/' . defined $version ? $version : 'all';
     unless (defined($log_text = $LOG_CACHE{$cache_id})) {
         my $cmd =
             $LOG_CMD .
             (defined $version ? " -r$version" : '') .
-            " $self->{NAME} |";
+            " " . $self->path . " |";
         $LOG_CACHE{$cache_id} = $log_text = $self->_read_pipe($cmd);
     }
     my @sections = split /\n[=\-]+\n/, $log_text;

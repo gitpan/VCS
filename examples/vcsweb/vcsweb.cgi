@@ -283,7 +283,7 @@ sub dir {
     }
     foreach $thing ($d->content) {
         next unless ref($thing);
-        $file = $thing->name;
+        $file = $thing->path;
         ($name = $file) =~ s|$dir||;
         ($relfile = $file) =~ s|$base||;
         if (ref($thing) =~ /::Dir$/) {

@@ -3,20 +3,36 @@ package VCS::Version;
 my $PREFIX = 'VCS';
 
 sub new {
-    my $class = shift;
-    $class =~ s#^$PREFIX##;
-    foreach my $impl (VCS->implementations) {
-        my $this_class = "$impl$class";
-        my $self = $this_class->new(@_);
-        return $self if defined $self;
-    }
-    return;
+    my $container_classtype = shift;
+    $container_classtype =~ s#^$PREFIX##;
+    my ($hostname, $impl_class, $path, $query) = VCS->parse_url(@_);
+    VCS->class_load($impl_class);
+    my $this_class = "$impl_class$container_classtype";
+    return $this_class->new(@_);
 }
 
-sub name {
+sub init {
+    my ($class, $url) = @_;
+    my ($hostname, $impl_class, $path, $query) = VCS->parse_url($url);
+    my @path = split '/', $path;
+    my $version = pop @path;
+    my $filename = join '/', @path;
+    my $self = {
+        URL => $url,
+        VERSION => $version,
+        PATH => $filename,
+    };
+    bless $self, $class;
+}
+
+sub url {
+    my $self = shift;
+    $self->{URL};
 }
 
 sub version {
+    my $self = shift;
+    $self->{VERSION};
 }
 
 sub tags {
@@ -37,6 +53,11 @@ sub date {
 sub reason {
 }
 
+sub path {
+    my $self = shift;
+    $self->{PATH};
+}
+
 1;
 
 __END__
@@ -48,10 +69,11 @@ VCS::Version - module for access to a VCS version
 =head1 SYNOPSIS
 
     use VCS;
-    die "Usage: $0 file version\n" unless @ARGV == 2;
+    die "Usage: $0 file-url\ne.g.: vcs://localhost/VCS::Rcs/file/name/1.2\n"
+        unless @ARGV == 1;
     my $version = VCS::Version->new(@ARGV);
     print "Methods of \$version:\n",
-        "name: ", $version->name, "\n",
+        "url: ", $version->url, "\n",
         "author: ", $version->author, "\n",
         "version: ", $version->version, "\n",
         ;
@@ -82,16 +104,25 @@ contents as follow:
 This is a pure virtual method, which must be over-ridden, and cannot be
 called directly in this class (a C<die> will result).
 
-=head2 VCS::Version-E<gt>new($file, $version)
+=head2 VCS::Version-E<gt>new($url)
 
-C<$file> is a filename, absolute or relative. C<$version> is a version
-number, or tag. Returns an object of class C<VCS::Version>, or undef
-if it fails. Implementation classes must be careful not to return an
-object unless they mean it.
+C<$url> is a VCS URL, of the format:
 
-=head2 $version-E<gt>name
+    vcs://localhost/VCS::Rcs/file/name/1.2
 
-Returns the C<$file> argument to C<new>.
+The version is a version number, or tag. Returns an object of class
+C<VCS::Version>, or throws an exception if it fails. Normally, an
+override of this method will call C<VCS::Version-E<gt>init($url)> to
+make an object, and then add to it as appropriate.
+
+=head2 VCS::Version-E<gt>init($url)
+
+C<$url> is a version URL. Returns an object of class C<VCS::Version>. This
+method calls C<VCS-E<gt>parse_url> to make sense of the URL.
+
+=head2 $version-E<gt>url
+
+Returns the C<$url> argument to C<new>.
 
 =head2 $version-E<gt>version
 
@@ -122,6 +153,10 @@ Returns the date this version was checked in.
 =head2 $version-E<gt>reason
 
 Returns the reason given on checking in this version.
+
+=head2 $version-E<gt>path
+
+Returns the absolute path of the file to which this version relates.
 
 =head1 SEE ALSO
 

@@ -3,20 +3,50 @@ package VCS::Dir;
 my $PREFIX = 'VCS';
 
 sub new {
-    my $class = shift;
-    $class =~ s#^$PREFIX##;
-    foreach my $impl (VCS->implementations) {
-        my $this_class = "$impl$class";
-        my $self = $this_class->new(@_);
-        return $self if defined $self;
-    }
-    return;
+    my $container_classtype = shift;
+    $container_classtype =~ s#^$PREFIX##;
+    my ($hostname, $impl_class, $path, $query) = VCS->parse_url(@_);
+    VCS->class_load($impl_class);
+    my $this_class = "$impl_class$container_classtype";
+    return $this_class->new(@_);
 }
 
-sub name {
+# assumes no query string
+sub init {
+    my($class, $url) = @_;
+    my ($hostname, $impl_class, $path, $query) = VCS->parse_url($url);
+    if (substr($path, -1, 1) ne '/') {
+        $path .= '/';
+        $url .= '/';
+    }
+    my $self = {};
+    $self->{PATH} = $path;
+    $self->{URL} = $url;
+    bless $self, $class;
+    return $self;
+}
+
+sub url {
+    my $self = shift;
+    $self->{URL};
 }
 
 sub content {
+}
+
+sub path {
+    my $self = shift;
+    $self->{PATH};
+}
+
+sub read_dir {
+    my ($self, $dir) = @_;
+    local *DIR;
+    opendir DIR, $dir;
+    my @d = grep { (!/^\.\.?$/) } readdir DIR;
+    closedir DIR;
+#warn "d: @d\n";
+    @d;
 }
 
 1;
@@ -30,10 +60,10 @@ VCS::Dir - module for access to a VCS directory
 =head1 SYNOPSIS
 
     use VCS;
-    my $d = VCS::Dir->new($dir);
-    print $d->name . "\n";
+    my $d = VCS::Dir->new($url);
+    print $d->url . "\n";
     foreach my $x ($d->content) {
-        print "\t" . $x->name . "\t" . ref($x) . "\n";
+        print "\t" . $x->url . "\t" . ref($x) . "\n";
     }
 
 =head1 DESCRIPTION
@@ -44,13 +74,13 @@ C<VCS::Dir> abstracts access to a directory under version control.
 
 Methods marked with a "*" are not yet finalised/implemented.
 
-=head2 VCS::Dir-E<gt>create_new($dir) *
+=head2 VCS::Dir-E<gt>create_new($url) *
 
-C<$dir> is a directory name, absolute or relative.  Creates data as
+C<$url> is a file-container URL.  Creates data as
 appropriate to convince the VCS that there is a file-container, and
-returns an object of class C<VCS::Dir>, or undef if it fails. This is a
-pure virtual method, which must be over-ridden, and cannot be called
-directly in this class (a C<die> will result).
+returns an object of class C<VCS::Dir>, or throws an exception if it
+fails. This is a pure virtual method, which must be over-ridden, and
+cannot be called directly in this class (a C<die> will result).
 
 =head2 VCS::Dir-E<gt>introduce($name, $create_class) *
 
@@ -69,20 +99,37 @@ appropriate create_new:
 This is a pure virtual method, which must be over-ridden, and cannot be
 called directly in this class (a C<die> will result).
 
-=head2 VCS::Dir-E<gt>new($dir)
+=head2 VCS::Dir-E<gt>new($url)
 
-C<$dir> is a directory name, absolute or relative.  Returns an object
-of class C<VCS::Dir>, or undef if it fails.
+C<$url> is a file-container URL.  Returns an object of class
+C<VCS::Dir>, or throws an exception if it fails. Normally, an override of
+this method will call C<VCS::Dir-E<gt>init($url)> to make an object,
+and then add to it as appropriate.
 
-=head2 $dir-E<gt>name
+=head2 VCS::Dir-E<gt>init($url)
 
-Returns the C<$dir> argument to C<new>.
+C<$url> is a file-container URL.  Returns an object of class
+C<VCS::Dir>. This method calls C<VCS-E<gt>parse_url> to make sense of
+the URL.
+
+=head2 $dir-E<gt>url
+
+Returns the C<$url> argument to C<new>.
 
 =head2 $dir-E<gt>content
 
 Returns a list of objects, either of class C<VCS::Dir> or
 C<VCS::File>, corresponding to files and directories within this
 directory.
+
+=head2 $dir-E<gt>path
+
+Returns the absolute path of the directory.
+
+=head2 $dir-E<gt>read_dir($dir)
+
+Returns the contents of the given filesystem directory. This is intended
+as a utility method for subclasses.
 
 =head1 SEE ALSO
 

@@ -4,83 +4,108 @@ NAME
 SYNOPSIS
         use VCS;
         $file = VCS::File->new($ARGV[0]);
-        print $file->name, ":\n";
+        print $file->url, ":\n";
         for $version ($file->versions) {
-            print
-                $version->version,
-                ' was checked in by ',
-                $version->author,
-                "\n",
-                ;
+            print $version->version,
+                  ' was checked in by ',
+                  $version->author,
+                  "\n";
         }
 
 DESCRIPTION
-    `VCS' is an API for abstracting access to all version control
-    systems from Perl code. This is achieved in a similar fashion to
-    the `DBI' suite of modules. There are "container" classes,
-    `VCS::Dir', `VCS::File', and `VCS::Version', and
-    "implementation" classes, such as `VCS::Cvs::Dir',
-    `VCS::Cvs::File', and `VCS::Cvs::Version', which are subclasses
-    of their respective "container" classes.
+    `VCS' is an API for abstracting access to all version control systems
+    from Perl code. This is achieved in a similar fashion to the `DBI' suite
+    of modules. There are "container" classes, `VCS::Dir', `VCS::File', and
+    `VCS::Version', and "implementation" classes, such as `VCS::Cvs::Dir',
+    `VCS::Cvs::File', and `VCS::Cvs::Version', which are subclasses of their
+    respective "container" classes.
 
-    `VCS' ships with `VCS::Rcs', `VCS::Cvs', and `VCS::Hms' implementation
-    classes.  Others can be added.
+    The container classes are instantiated with URLs. There is a URL scheme
+    for entities under version control. The format is as follows:
 
-METHODS
-  VCS->implementations
+        vcs://localhost/VCS::Cvs/fs/path/?query=1
 
-    Returns a list of the implementations, in the order in which
-    they will be tried by the container classes. The first time it
-    is called (as determined by whether there are any
-    implementations known), it will search @INC for all compliant
-    implementations.
+    The "query" part is ignored for now. The path must be an absolute path,
+    meaningful to the given class. The class is an implementation class,
+    such as `VCS::Cvs'.
 
-  VCS->add_implementations(@implementations)
+    The "container" classes work as follows: when the `new' method of a
+    container class is called, it will parse the given URL, using the
+    `VCS->parse_url' method. It will then call the `new' of the
+    implementation's appropriate container subclass, and return the result.
+    For example,
 
-    `@implementations' is moved/added to the front of the list, so
-    use this also to set the default or control the order of
-    implementations tried.
+        VCS::Version->new('vcs://localhost/VCS::Cvs/fs/path/file/1.2');
+
+    will return a `VCS::Cvs::Version'.
+
+    An implementation class is recognised as follows: its name starts with
+    `VCS::', and `require "VCS/Classname.pm"' will load the appropriate
+    implementation classes corresponding to the container classes.
+
+VCS METHODS
+  VCS->parse_url
+
+    This returns a four-element list:
+
+        ($hostname, $classname, $path, $query)
+
+    For example,
+
+        VCS->parse_url('vcs://localhost/VCS::Cvs/fs/path/file/1.2');
+
+    will return
+
+        (
+            'localhost',
+            'VCS::Cvs',
+            '/fs/path/file/1.2',
+            ''
+        )
+
+    This is mostly intended for use by the container classes, and its
+    interface is subject to change.
+
+  VCS->class_load
+
+    This loads its given implementation class.
+
+    This is mostly intended for use by the container classes, and its
+    interface is subject to change.
+
+VCS::* METHODS
+    Please refer to the documentation for the VCS::Dir manpage, the
+    VCS::File manpage, and the VCS::Version manpage; as well as the
+    implementation specific documentation as in the VCS::Cvs manpage, the
+    VCS::Rcs manpage.
 
 AVAILABILITY
-    VCS.pm and its friends will be available from CPAN.
-    There is also a Sourceforge project at:
+    VCS.pm and its friends are available from CPAN. There is a web page at:
+
+        http://www.astray.com/VCS/
+
+    as well as a sourceforge project page at:
 
         http://sourceforge.net/projects/vcs/
 
-PREREQUISITE MODULES
-    VCS.pm requires that Sort::Versions be installed.
-
-    The optional vcsweb.cgi program uses the CGI and CGI::Carp modules.
-
 MAILING LIST
-    There is currently a mailing list about VCS. Go to the following
-    webpage to subscribe to it:
+    There is currently a mailing list about VCS. Go to the following webpage
+    to subscribe to it:
 
         http://www.astray.com/mailman/listinfo/vcs
 
-    General queries should be made directly to the mailing list.
-
-    There is a list archive at:
+    There is a web archive of the mailing list at:
 
         http://www.astray.com/pipermail/vcs/
 
+    General queries should be made directly to the mailing list.
+
 COPYRIGHT
-    Copyright (c) 1998-2001 Leon Brocard. All rights reserved. This
-    program is free software; you can redistribute it and/or modify
-    it under the same terms as Perl itself.
+    Copyright (c) 1998-2001 Leon Brocard. All rights reserved. This program
+    is free software; you can redistribute it and/or modify it under the
+    same terms as Perl itself.
 
 SEE ALSO
-    the VCS::Cvs pod doc, the VCS::Dir pod doc, the VCS::File
-    pod doc, the VCS::Rcs pod doc, the VCS::Version pod doc, and the
-    VCS_dev.pod pod documentation.
+    the VCS::Cvs manpage, the VCS::Dir manpage, the VCS::File manpage, the
+    VCS::Rcs manpage, the VCS::Version manpage.
 
-CHANGES FROM 0.03
-    Add Hms.
-    Split out VCS_dev.pod documentation for VCS::* developers.
-
-CHANGES FROM 0.02
-    Documentation, mostly. Caching still doesn't work with
-    long-lived processes.
-
-    
-			

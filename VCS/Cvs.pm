@@ -22,15 +22,17 @@ sub _boiler_plate_info {
 sub _split_log {
     my ($self, $version) = @_;
     my $log_text;
-    my $cache_id = $self->name;
+    my $cache_id = $self->url;
     unless (defined($log_text = $LOG_CACHE{$cache_id})) {
         my $cmd =
             $LOG_CMD .
-            " $self->{NAME} 2>/dev/null |";
+            " " . $self->path . " 2>/dev/null |";
+#warn "cmd: $cmd\n";
         $LOG_CACHE{$cache_id} = $log_text = $self->_read_pipe($cmd);
     }
     my @sections = split /\n[=\-]+\n/, $log_text;
-    @sections = ($sections[0], grep {/^revision $version\n/} @sections) if $version;
+    @sections = ($sections[0], grep { /^revision $version(?:\s+locked by.*?)\n/ } @sections)
+        if $version;
 #map { print "SEC: $_\n" } @sections;
     @sections;
 }
@@ -88,7 +90,7 @@ VCS::Cvs - notes for the CVS implementation
 
     $ENV{CVSROOT} = '/cvsroot';
     use VCS;
-    $file = VCS::File->new('/source/cvsrepos/project/Makefile');
+    $file = VCS::File->new('vcs://localhost/VCS::Cvs/source/project/Makefile');
 
 =head1 DESCRIPTION
 

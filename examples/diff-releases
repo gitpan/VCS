@@ -97,9 +97,9 @@ sub show {
     my($dir, $depth) = @_;
     my $d = VCS::Dir->new($dir) || return;
     foreach my $x ($d->content) {
-        warn $x->name .  "\n" if $verbose;
+        warn $x->path .  "\n" if $verbose;
         if (ref($x) =~ 'Dir') {
-            show($x->name);
+            show($x->path);
         } else {
             disp($x, $depth+1);
         }
@@ -124,7 +124,7 @@ sub disp {
     $version = ($versions[-1])->version;
     return if ($taggedversion eq $version);
 
-    my $name = $obj->name;
+    my $name = $obj->path;
     $name =~ s|^$dir||;
     $name =~ s|^/||;
 
