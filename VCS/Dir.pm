@@ -1,5 +1,7 @@
 package VCS::Dir;
 
+use VCS::File;
+
 my $PREFIX = 'VCS';
 
 sub new {
@@ -20,6 +22,8 @@ sub init {
         $url .= '/';
     }
     my $self = {};
+    $self->{HOSTNAME} = $hostname;
+    $self->{IMPL_CLASS} = $impl_class;
     $self->{PATH} = $path;
     $self->{URL} = $url;
     bless $self, $class;
@@ -37,6 +41,53 @@ sub content {
 sub path {
     my $self = shift;
     $self->{PATH};
+}
+
+sub tags {
+  my $self = shift;
+  my $rh = {}; # result hash
+  my @files = $self->recursive_read_dir();
+
+  my $url;
+
+  foreach my $file (@files) {
+    my $vcsfile = VCS::File->new('vcs://'.$self->{HOSTNAME}.'/'.$self->{IMPL_CLASS}.'/'.$file);
+    my $file_tag_information = $vcsfile->tags();
+    foreach my $filetag (keys(%$file_tag_information)) {
+      $rh->{$filetag}->{$file} = $file_tag_information->{$filetag};
+    }
+  }
+
+  return $rh;
+
+}
+
+
+sub recursive_read_dir {
+  my $self = shift;
+  my ($dir) = @_;
+  $dir ||= $self->path(); # let it take path if its not been
+                          # defined, i'm not really sure about this,
+                          # to be honest the whole things need an
+                          # an overhaul in the way it works,
+                          # but for now i'm just happy to get
+                          # my work done. - Greg
+  $dir.='/' unless (substr($dir,-1,1) eq '/');
+  my @files;
+  opendir(DIR,$dir);
+  my @contents = grep { (!/^\.\.?$/) } readdir(DIR);
+  @contents = grep { (!/,v$/) } @contents; # RCS files, shouldn't matter if they are RCS/*,v or just *,v
+  @contents = grep { (!/^CVS$/) } @contents;
+
+  closedir(DIR);
+  foreach my $content (@contents) {
+    if (-d $dir.$content) {
+      push(@files,($self->recursive_read_dir($dir.$content)));
+    } else {
+      push(@files,$dir.$content);
+    }
+  }
+  return @files;
 }
 
 sub read_dir {
@@ -111,6 +162,17 @@ and then add to it as appropriate.
 C<$url> is a file-container URL.  Returns an object of class
 C<VCS::Dir>. This method calls C<VCS-E<gt>parse_url> to make sense of
 the URL.
+
+=head2 $dir-E<gt>tags
+
+* THIS METHOD WORKS RECURSIVELY ON THE DIRECTORY AT HAND *
+
+Returns all the tags inside a directory and a little bit more
+information. The actual datstructure is a hash of hashes. The first
+level hash is a hash keyed on tag names, in other words it lists as
+its keys every single tag name in or below a directory. Each of
+these tag names point to another hash with has filenames as keys
+and version numbers as values.
 
 =head2 $dir-E<gt>url
 

@@ -9,7 +9,7 @@ use VCS::File;
 use VCS::Version;
 use URI;
 
-$VERSION = '0.07';
+$VERSION = '0.08';
 
 sub parse_url {
     # vcs://hostname/classname/...
@@ -147,9 +147,18 @@ There is a web archive of the mailing list at:
 
 General queries should be made directly to the mailing list.
 
+=head1 AUTHORS
+
+Greg McCarroll <greg@mccarroll.demon.co.uk>
+Leon Brocard
+
 =head1 COPYRIGHT
 
-Copyright (c) 1998-2001 Leon Brocard. All rights reserved. This
+Copyright(c) 2003 Greg McCarroll. All rights reserved. This
+program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+Copyright (c) 1998-2002 Leon Brocard. All rights reserved. This
 program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 

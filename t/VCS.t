@@ -1,7 +1,8 @@
 #!perl
 use strict;
-use Test::More tests => 24;
+use Test::More tests => 30;
 use Cwd;
+use Data::Dumper;
 
 BEGIN { use_ok( 'VCS' ) }
 
@@ -20,9 +21,35 @@ is(Data::Dumper::Dumper(\@segments),$dd,'Parse URL');
 
 
 my $td = "/tmp/vcstestdir.$$";
+
+my $all_files = {   't/rcs_testfiles/dir/file'       => 0,
+                    't/VCS.t'                        => 0,
+                  };
+my $h = {}; bless $h,'VCS::Dir';
+my @found_files;
+
+my $expected_files = 2;
+if (-f 't/VCS.t~') {
+  $expected_files++; # Lazy i know ;-)
+}
+
+
+@found_files=$h->recursive_read_dir('t');
+for (@found_files) {
+  if (exists($all_files->{$_})) {
+    $all_files->{$_}++;
+  } else {
+    warn "$_ found in test directory";
+  }
+}
+for (values(%$all_files)) {
+  is($_,1,'recursive_read_dir with no trailing slash');
+}
+
+is(scalar(@found_files),$expected_files,'recursive_read_dir');
+
 test_rcs($td);
 test_cvs($td);
-
 
 sub test_cvs {
     my ($td) = @_;
@@ -62,6 +89,13 @@ EOF
 
     my $d = VCS::Dir->new("$base_url/dir");
     ok (defined($d),'Dir');
+
+
+    my $th = $d->tags();
+    #warn("\n",Dumper($th),"\n");
+    ok (exists $th->{'mytag1'});
+    ok (exists $th->{'mytag1'}->{$sandbox.'/td/dir/file'});
+    is($th->{'mytag1'}->{$sandbox.'/td/dir/file'},'1.2');
 
     my @c = $d->content;
     is(scalar(@c),1,'content');

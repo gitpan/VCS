@@ -1,5 +1,24 @@
 Revision history for Perl extension VCS.
 
+0.08  Thu Jan 16 16:19:37 GMT 2003
+	- Added a tags() method to VCS::Dir (see POD for more details), 
+	  there are currently only tests for this function in the CVS
+	  testsuite, this will change in the next version which should be
+	  an overhaul of the entire test suite. There should also be a 
+	  nice example of how powerful tags() on VCS::Dir can be in the
+	  next version.
+
+0.07  Tue Jan 14 UNKNOWN GMT 2003
+	- Removed dependencies on uudecode, gzip and tar in the tests in
+	  response to failed test report from CPAN testers (Thanks
+	  CPAN Testers!) This has been done by moving the test
+	  directory structure into t/.
+	- Moved test.pl to t/VCS.t
+
+0.06  Mon Jan 13 UNKNOWN GMT 2003
+	- Changed test.pl to use Test::More
+	- Added tags() method to VCS::File implementations in CVS, RCS, HMS.
+
 0.05  Sun Jul 28 01:09:44 BST 2002
 	- VCS URLs, eliminating problems with which kind of VCS to use.
 	- Exceptions on failed calls to "new" instead of returning undef. This
