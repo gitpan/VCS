@@ -1,5 +1,12 @@
 Revision history for Perl extension VCS.
 
+0.12  Sun Dec 21 20:39:45 GMT 2003
+	- Added POD for the changes to tags(), sorry folks forgot
+	  to do it earlier.  
+	- p.s. btw, this is now no longer hosted on SF's CVS, if you
+	  want CVS access let me know as i'm upping the pace dramatically
+	  on this module so it should at long last start to go somewhere.
+	
 0.11  Sun Dec 21 17:17:45 GMT 2003
 	- Applied patch from Pierre Denis (Thanks Leon!), which sorted
           out a problem with testing Rcs from a CVS checkout.

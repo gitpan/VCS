@@ -101,6 +101,20 @@ Returns a reference to a hash that has keys that are any tags attached
 to the file and the values are the corresponding versions which the
 tags refer to.
 
+=head2 VCS::File-E<gt>tags_hash()
+
+Cvs ONLY
+
+Same as for -E<gt>.
+
+=head2 VCS::File-E<gt>tags_array()
+
+Cvs ONLY
+
+Returns an array of tags that are connected with the file, this is useful
+alongside tags_hash() as it allows you to inspect the order in which
+tags were applied.
+
 =head2 VCS::File-E<gt>init($url)
 
 C<$url> is a file URL. Returns an object of class C<VCS::File>. This
