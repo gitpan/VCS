@@ -7,7 +7,7 @@ BEGIN {
   if ($res == -1) {
     plan skip_all => 'All test have been skipped as the cvs binary is not on your path';
   } else {
-    plan tests => 17;
+    plan tests => 19;
   }
 }
 
@@ -62,7 +62,18 @@ ok(scalar(@versions),'versions');
 my ($old, $new) = @versions;
 is($old->version(),'1.1','old version');
 is($new->version(),'1.2','new version');
-is($new->date(),'2001/11/13 04:10:29','date');
+
+my $olddate = '2001/11/13 04:10:29';
+my $newdate = '2001-11-13 04:10:29 +0000';
+my $testdate;
+$testdate = $olddate;
+ok($testdate eq '2001/11/13 04:10:29' || $testdate eq '2001-11-13 04:10:29 +0000','date test test');
+$testdate = $newdate;
+ok($testdate eq '2001/11/13 04:10:29' || $testdate eq '2001-11-13 04:10:29 +0000','date test test');
+$testdate = $new->date();
+ok($testdate eq '2001/11/13 04:10:29' || $testdate eq '2001-11-13 04:10:29 +0000','date');
+
+
 is($new->author(),'user','author');
 
 my $d = VCS::Dir->new("$base_url/dir");
