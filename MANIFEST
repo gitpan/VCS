@@ -28,6 +28,6 @@ t/00VCS.t
 t/01Rcs.t
 t/01Cvs.t
 t/rcs_testfiles/dir/file
-t/rcs_testfiles/dir/RCS/file,v
-t/cvs_testfiles/td/dir/file,v
+t/rcs_testfiles/dir/RCS/file,v_for_testing
+t/cvs_testfiles/td/dir/file,v_for_testing
 

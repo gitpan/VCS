@@ -9,7 +9,7 @@ use VCS::File;
 use VCS::Version;
 use URI;
 
-$VERSION = '0.12';
+$VERSION = '0.13';
 
 sub parse_url {
     # vcs://hostname/classname/...
@@ -125,6 +125,11 @@ as in L<VCS::Cvs>, L<VCS::Rcs>.
 
 =head1 AVAILABILITY
 
+Much of this information is incorrect, the current up to date
+version of VCS is held on a different CVS server now, i'm going
+to make things a little more public and then update the below
+information - thanks for your patience.
+
 VCS.pm and its friends are available from CPAN.  There is a web page
 at:
 
@@ -156,8 +161,10 @@ Leon Brocard
 
 Thanks to the following for patches,
 
+    Richard Clamp
     Pierre Denis
     Slaven Rezic
+
 
 =head1 COPYRIGHT
 

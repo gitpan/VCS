@@ -1,6 +1,6 @@
 #!perl
 use strict;
-use Test::More tests => 7;
+use Test::More tests => 9;
 use Cwd;
 #use Data::Dumper;
 my $td = "/tmp/vcstestdir.$$";
@@ -22,14 +22,16 @@ is(Data::Dumper::Dumper(\@segments),$dd,'Parse URL');
 
 
 
-my $all_files = {   't/rcs_testfiles/dir/file'         => 0,
+my $all_files = {   't/cvs_testfiles/td/dir/file,v_for_testing' => 0,
+                    't/rcs_testfiles/dir/RCS/file,v_for_testing' => 0,
+                    't/rcs_testfiles/dir/file'         => 0,
                     't/00VCS.t'                        => 0,
                     't/01Rcs.t'                        => 0,
                     't/01Cvs.t'                        => 0,
                   };
 my $h = {}; bless $h,'VCS::Dir';
 my @found_files;
-my $expected_files = 4;
+my $expected_files = 6;
 $expected_files++ if (-f 't/00VCS.t~');
 $expected_files++ if (-f 't/01Rcs.t~');
 $expected_files++ if (-f 't/01Cvs.t~');

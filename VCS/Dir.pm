@@ -51,7 +51,7 @@ sub tags {
   my $url;
 
   foreach my $file (@files) {
-    my $vcsfile = VCS::File->new('vcs://'.$self->{HOSTNAME}.'/'.$self->{IMPL_CLASS}.'/'.$file);
+    my $vcsfile = eval { VCS::File->new('vcs://'.$self->{HOSTNAME}.'/'.$self->{IMPL_CLASS}.'/'.$file) } or next;
     my $file_tag_information = $vcsfile->tags();
     foreach my $filetag (keys(%$file_tag_information)) {
       $rh->{$filetag}->{$file} = $file_tag_information->{$filetag};

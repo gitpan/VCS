@@ -1,5 +1,13 @@
 Revision history for Perl extension VCS.
 
+0.13  Fri Jan  2 10:18:44 GMT 2004
+ 	- Renamed the test files from ,v to ,v_for_testing as reports
+	  indicated this was causing problems.
+	- Added patch from Richard Clamp to handle directories with
+	  non-versioned files more gracefully.
+	- Moved CVS fully onto faith.mccarroll.org.uk away from
+	  sourceforge. Please contact me if you need access.
+	
 0.12  Sun Dec 21 20:39:45 GMT 2003
 	- Added POD for the changes to tags(), sorry folks forgot
 	  to do it earlier.  
@@ -112,4 +120,5 @@ Revision history for Perl extension VCS.
 0.01  Mon Nov 16 12:41:10 1998
 	- first released version, with powerful
           vcsweb.cgi tool
+
 

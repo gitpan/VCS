@@ -2,8 +2,8 @@
 use strict;
 use Test::More;
 BEGIN {
-  unless (-e 't/rcs_testfiles/dir/RCS/file,v') {
-    plan skip_all => 'All tests have been skipped as file,v does not exist (not checked out by cvs?)';
+  unless (-e 't/rcs_testfiles/dir/RCS/file,v_for_testing') {
+    plan skip_all => 'All tests have been skipped as file,v_for_testing does not exist (not checked out by cvs?)';
   }
   my $res = system('co -V');
   if ($res == -1) {
@@ -31,7 +31,7 @@ if (!(-d $td.'/dir'))        { mkdir($td.'/dir');     }
 if (!(-d $td.'/dir/RCS'))    { mkdir($td.'/dir/RCS'); }
 
 cp('t/rcs_testfiles/dir/file',$td.'/dir');
-cp('t/rcs_testfiles/dir/RCS/file,v',$td.'/dir/RCS/');
+cp('t/rcs_testfiles/dir/RCS/file,v_for_testing',$td.'/dir/RCS/file,v');
 
 system <<EOF;
 cd $td/dir

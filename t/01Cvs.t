@@ -39,7 +39,7 @@ cd $repository
 cvs init
 EOF
 
-cp($distribution.'/t/cvs_testfiles/td/dir/file,v',$repository.'/td/dir/');
+cp($distribution.'/t/cvs_testfiles/td/dir/file,v_for_testing',$repository.'/td/dir/file,v');
 
 system <<EOF;
 cd $sandbox
