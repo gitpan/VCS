@@ -12,10 +12,6 @@ VCS/Cvs.pm
 VCS/Cvs/Dir.pm
 VCS/Cvs/File.pm
 VCS/Cvs/Version.pm
-VCS/Hms.pm
-VCS/Hms/Dir.pm
-VCS/Hms/File.pm
-VCS/Hms/Version.pm
 VCS/Rcs.pm
 VCS/Rcs/Dir.pm
 VCS/Rcs/File.pm

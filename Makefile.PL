@@ -19,8 +19,7 @@ WriteMakefile(
     'NAME'	    => 'VCS',
     'ABSTRACT_FROM' => 'VCS.pm', # finds =head1 NAME line for PPD
     'VERSION_FROM'  => 'VCS.pm', # finds $VERSION
-    'PREREQ_PM'     => { 'URI' => 0,
-		         'File::Spec::Functions' => 0},
+    'PREREQ_PM'     => { 'URI' => 0 },
     'PL_FILES'      => $PL_FILES,
     'EXE_FILES'     => $EXE_FILES,
     'dist'          => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

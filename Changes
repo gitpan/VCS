@@ -1,5 +1,11 @@
 Revision history for Perl extension VCS.
 
+0.11  Sun Dec 21 17:17:45 GMT 2003
+	- Applied patch from Pierre Denis (Thanks Leon!), which sorted
+          out a problem with testing Rcs from a CVS checkout.
+	- Started to split tags() into tags_hash and tags_array, the
+	  later maintaining order.
+
 0.10  Wed Feb  5 16:10:25 GMT 2003
 	- Applied patch from Leon Broacard (Thanks Leon!), which sorted
 	  out a problem with pservers and absolute paths.

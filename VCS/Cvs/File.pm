@@ -49,6 +49,34 @@ sub tags {
     return $tags_hash;
 }
 
+sub tags_hash {
+    my $self = shift;
+    my ($header, $log) = $self->_split_log($self->{VERSION});
+    my $header_info = $self->_parse_log_header($header);
+    my $tags_hash = {};
+    my $tag_text = $header_info->{'symbolic names'};
+    $tag_text =~ s#^\s+##gm;
+    map {
+        my ($tag, $rev) = split /:\s*/;
+        $tags_hash->{$tag}=$rev;
+    } split /\n/, $tag_text;
+    return $tags_hash;
+}
+
+sub tags_array {
+    my $self = shift;
+    my ($header, $log) = $self->_split_log($self->{VERSION});
+    my $header_info = $self->_parse_log_header($header);
+    my $tags_hash = {};
+    my $tag_text = $header_info->{'symbolic names'};
+    $tag_text =~ s#^\s+##gm;
+    my @tag_array;
+    map {
+        my ($tag, $rev) = split /:\s*/;
+        push (@tag_array,$tag);
+    } split /\n/, $tag_text;
+    return \@tag_array;
+}
 
 
 1;

@@ -2,6 +2,9 @@
 use strict;
 use Test::More;
 BEGIN {
+  unless (-e 't/rcs_testfiles/dir/RCS/file,v') {
+    plan skip_all => 'All tests have been skipped as file,v does not exist (not checked out by cvs?)';
+  }
   my $res = system('co -V');
   if ($res == -1) {
     plan skip_all => 'All test have been skipped as the co binary (part of RCS)is not on your path';
