@@ -9,7 +9,7 @@ use VCS::File;
 use VCS::Version;
 use URI;
 
-$VERSION = '0.09';
+$VERSION = '0.10';
 
 sub parse_url {
     # vcs://hostname/classname/...
@@ -149,7 +149,7 @@ General queries should be made directly to the mailing list.
 
 =head1 AUTHORS
 
-Greg McCarroll <greg@mccarroll.demon.co.uk>
+Greg McCarroll <greg@mccarroll.org.uk>
 Leon Brocard
 
 =head1 KUDOS

@@ -2,11 +2,13 @@ package VCS::Cvs;
 
 use strict;
 use vars qw($VERSION);
+use Cwd qw(cwd);
+use File::Spec::Functions qw(splitpath);
 use VCS::Cvs::Dir;
 use VCS::Cvs::File;
 use VCS::Cvs::Version;
 
-$VERSION = '0.05';
+$VERSION = '0.06';
 
 my $LOG_CMD = "cvs log";
 
@@ -24,11 +26,18 @@ sub _split_log {
     my $log_text;
     my $cache_id = $self->url;
     unless (defined($log_text = $LOG_CACHE{$cache_id})) {
+
+        my $cwd = cwd();
+        my($volume, $path, $file) = splitpath($self->path);
+        chdir $path;
+
         my $cmd =
             $LOG_CMD .
-            " " . $self->path . " 2>/dev/null |";
+            " " . $file . " 2>/dev/null |";
 #warn "cmd: $cmd\n";
         $LOG_CACHE{$cache_id} = $log_text = $self->_read_pipe($cmd);
+
+        chdir $cwd;
     }
     my @sections = split /\n[=\-]+\n/, $log_text;
     @sections = ($sections[0], grep { /^revision $version(?:\s+locked by.*?)\n/ } @sections)

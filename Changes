@@ -1,5 +1,11 @@
 Revision history for Perl extension VCS.
 
+0.10  Wed Feb  5 16:10:25 GMT 2003
+	- Applied patch from Leon Broacard (Thanks Leon!), which sorted
+	  out a problem with pservers and absolute paths.
+	- Updated my email address (word of wisdom, never change your
+	  email address its too painful)
+
 0.09  Sun Jan 19 13:12:39 GMT 2003
 	- Applied patch from Slaven Rezic (Thanks Slaven!), which ...
 		- cleaned up the _CMD variables making them global
