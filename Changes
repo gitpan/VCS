@@ -1,5 +1,34 @@
 Revision history for Perl extension VCS.
 
+0.04  [not yet]
+        - [now in SourceForge CVS]
+        - Added VCS::Hms
+	- Added multitude of changes from Peter Prymmer:
+        - modified the MANIFEST to include the various Hms*
+          files as well as the new VCS_dev.pod doc and a Imp_pod.tpl
+          file
+	- added pod to VCS/Rcs.pm and similar pod to VCS/Hms.pm.
+          He turned the generalization of pod into the Imp_pod.tpl pod
+          template for other VCS::* developers to borrow from.
+        - touched up other pod to render it `podchecker -warnings
+          -warnings` using podchecker from a test installation of perl
+          5.7.2 (perl@12494 kit from jhi). This mostly entailed
+          s/\$object->method/\$object-E<gt>method/ in =head[12]
+          headings. He added gratuitous =cut's to most pods (even
+          though podchecker does not seem to mind their absence).
+        - He turned one of the example programs into a MakeMaker
+          extractable *.PL script.  Specifically he turned
+          examples/diff-hist into examples/diff-hist.PL and made
+          appropriate changes to the Makefile.PL. He has only touched
+          the one program and wanted to solicit comment on this
+          installation technique: note that by running `make install`
+          the blib/scripts/diff-hist script will be installed into
+          your @INC in such a way that `diff-hist` will lie in you
+          $PATH.  Is this something worth doing with the other
+          programs in the examples/* directory? Should the examples
+          be given other more distinctive names such as vcsdiff-hist,
+          i.e. with a leading 'vcs' name?
+
 0.03  Thu May 27 14:31:20 BST 1999
         - more documentation
 	- a couple of bug fixes

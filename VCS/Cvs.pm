@@ -6,7 +6,7 @@ use VCS::Cvs::Dir;
 use VCS::Cvs::File;
 use VCS::Cvs::Version;
 
-$VERSION = '0.02';
+$VERSION = '0.05';
 
 my $LOG_CMD = "cvs log";
 
@@ -82,7 +82,7 @@ __END__
 
 =head1 NAME
 
-VCS::Cvs - implementation notes for CVS implementation
+VCS::Cvs - notes for the CVS implementation
 
 =head1 SYNOPSIS
 
@@ -95,16 +95,18 @@ VCS::Cvs - implementation notes for CVS implementation
 Currently, the user needs to ensure that the environmental requirements
 for CVS command line tools are satisfied.
 
-=head1 AVAILABILITY 
+=head1 AVAILABILITY
 
 VCS::Cvs is currently part of the main VCS distribution.
 
-=head1 COPYRIGHT 
+=head1 COPYRIGHT
 
-Copyright (c) 1998-9 Leon Brocard. All rights reserved. This program is free 
-software; you can redistribute it and/or modify it under the same terms
-as Perl itself. 
+Copyright (c) 1998-2001 Leon Brocard. All rights reserved. This
+program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
 L<VCS>.
+
+=cut

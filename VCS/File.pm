@@ -47,7 +47,7 @@ C<VCS::File> abstracts access to a file under version control.
 
 Methods marked with a "*" are not yet finalised/implemented.
 
-=head2 VCS::File->create_new($name) *
+=head2 VCS::File-E<gt>create_new($name) *
 
 C<$name> is a file name, absolute or relative.  Creates data as
 appropriate to convince the VCS that there is a file, and returns an
@@ -55,7 +55,7 @@ object of class C<VCS::File>, or undef if it fails. This is a pure
 virtual method, which must be over-ridden, and cannot be called
 directly in this class (a C<die> will result).
 
-=head2 VCS::File->introduce($version_args) *
+=head2 VCS::File-E<gt>introduce($version_args) *
 
 C<$version_args> is a hash-ref, see L<VCS::Version> for details.
 Implementation classes are expected to use something similar to this
@@ -71,16 +71,16 @@ code, to call create_new in the right C<VCS::Version> subclass:
 This is a pure virtual method, which must be over-ridden, and cannot be
 called directly in this class (a C<die> will result).
 
-=head2 VCS::File->new($file)
+=head2 VCS::File-E<gt>new($file)
 
 C<$file> is a file name, absolute or relative.  Returns an object
 of class C<VCS::File>, or undef if it fails.
 
-=head2 $file->name
+=head2 $file-E<gt>name
 
 Returns the C<$file> argument to C<new>.
 
-=head2 $file->versions
+=head2 $file-E<gt>versions
 
 Returns a list of objects of class C<VCS::Version>, in order of ascending
 revision number. If it is passed an extra (defined) argument, it only
@@ -94,3 +94,5 @@ L<VCS>.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
+
+=cut

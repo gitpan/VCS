@@ -8,7 +8,7 @@ use VCS::Dir;
 use VCS::File;
 use VCS::Version;
 
-$VERSION = '0.03';
+$VERSION = '0.04';
 
 sub implementations {
     my $class = shift;
@@ -47,6 +47,8 @@ sub add_implementations {
     # first, strip out all occurrences of these from the existing list
     my %mask = map { ($_ => 1) } @implementations;
     @IMPLEMENTATIONS = grep { !$mask{$_} } @IMPLEMENTATIONS;
+	# drat, VCS::CVS and VCS::PVCS aren't one of ours...
+	@implementations = grep { $_ !~ /CVS|PVCS/ } @implementations;
     map { require(_class2file($_)) } @implementations;
     unshift @IMPLEMENTATIONS, @implementations;
 }
@@ -65,12 +67,10 @@ VCS - Library for generic Version Control System access in Perl
     $file = VCS::File->new($ARGV[0]);
     print $file->name, ":\n";
     for $version ($file->versions) {
-        print
-            $version->version,
-            ' was checked in by ',
-            $version->author,
-            "\n",
-            ;
+        print $version->version,
+              ' was checked in by ',
+              $version->author,
+              "\n";
     }
 
 =head1 DESCRIPTION
@@ -92,51 +92,55 @@ An implementation class is recognised as follows: its name starts with
 C<VCS::>, and C<require "VCS/Classname.pm"> will load the appropriate
 implementation classes corresponding to the container classes.
 
-In general, implementation classes' C<new> methods must be careful not
-to return "false positives", by rigorously checking if their arguments
-conform to their particular version control system.
+=head1 VCS METHODS
 
-Implementation classes must include documentation for their special
-requirements, such as mandatory environment variables. See L<VCS::Cvs>
-for an example.
-
-If a method, or an argument to a method makes no sense for a particular
-implementation, then the implementation may ignore it, but must do so
-quietly.
-
-=head1 METHODS
-
-=head2 VCS->implementations
+=head2 VCS-E<gt>implementations
 
 Returns a list of the implementations, in the order in which they will
 be tried by the container classes. The first time it is called (as
 determined by whether there are any implementations known), it will
 search @INC for all compliant implementations.
 
-=head2 VCS->add_implementations(@implementations)
+=head2 VCS-E<gt>add_implementations(@implementations)
 
 C<@implementations> is moved/added to the front of the list, so use this
 also to set the default or control the order of implementations tried.
 
-=head1 AVAILABILITY 
+=head1 VCS::* METHODS
 
-VCS.pm and its friends will be available from CPAN.
+Please refer to the documentation for L<VCS::Dir>, L<VCS::File>, 
+and L<VCS::Version>; as well as the implementation specific documentation
+as in L<VCS::Cvs>, L<VCS::Rcs>.
+
+=head1 AVAILABILITY
+
+VCS.pm and its friends are available from CPAN.  There is a web page
+at:
+
+    http://www.astray.com/VCS/
+
+as well as a sourceforge project page at:
+
+    http://sourceforge.net/projects/vcs/
 
 =head1 MAILING LIST
 
-There is currently a mailing list about VCS.
+There is currently a mailing list about VCS. Go to the following
+webpage to subscribe to it:
 
-To subscribe, send a blank message to: vcs-subscribe@astray.com.
-To talk, send a message to: vcs@astray.com.
-To unsubscribe, send a blank message to: vcs-unsubscribe@astray.com.
+    http://www.astray.com/mailman/listinfo/vcs
+
+There is a web archive of the mailing list at:
+
+    http://www.astray.com/pipermail/vcs/
 
 General queries should be made directly to the mailing list.
 
-=head1 COPYRIGHT 
+=head1 COPYRIGHT
 
-Copyright (c) 1998/9 Leon Brocard. All rights reserved. This program is free 
-software; you can redistribute it and/or modify it under the same terms
-as Perl itself. 
+Copyright (c) 1998-2001 Leon Brocard. All rights reserved. This
+program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =head1 SEE ALSO
 

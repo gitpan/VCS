@@ -65,7 +65,7 @@ control.
 
 Methods marked with a "*" are not yet finalised/implemented.
 
-=head2 VCS::Version->create_new(@version_args) *
+=head2 VCS::Version-E<gt>create_new(@version_args) *
 
 C<@version_args> is a list which will be treated as a hash, with
 contents as follow:
@@ -82,44 +82,44 @@ contents as follow:
 This is a pure virtual method, which must be over-ridden, and cannot be
 called directly in this class (a C<die> will result).
 
-=head2 VCS::Version->new($file, $version)
+=head2 VCS::Version-E<gt>new($file, $version)
 
 C<$file> is a filename, absolute or relative. C<$version> is a version
 number, or tag. Returns an object of class C<VCS::Version>, or undef
 if it fails. Implementation classes must be careful not to return an
 object unless they mean it.
 
-=head2 $version->name
+=head2 $version-E<gt>name
 
 Returns the C<$file> argument to C<new>.
 
-=head2 $version->version
+=head2 $version-E<gt>version
 
 Returns the C<$version> argument to C<new>.
 
-=head2 $version->tags
+=head2 $version-E<gt>tags
 
 Returns a list of tags applied to this version.
 
-=head2 $version->text
+=head2 $version-E<gt>text
 
 Returns the text of this version of the file.
 
-=head2 $version->diff($other_version)
+=head2 $version-E<gt>diff($other_version)
 
 Returns the differences (in C<diff -u> format) between this version and
 the other version. Currently, the other version must also be a
 C<VCS::Version> object.
 
-=head2 $version->author
+=head2 $version-E<gt>author
 
 Returns the name of the user who checked in this version.
 
-=head2 $version->date
+=head2 $version-E<gt>date
 
 Returns the date this version was checked in.
 
-=head2 $version->reason
+=head2 $version-E<gt>reason
 
 Returns the reason given on checking in this version.
 
@@ -131,3 +131,5 @@ L<VCS>.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
+
+=cut

@@ -1,10 +1,42 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
+
+# standard perl modules to assist with .PL extraction
+use Config;
+use File::Basename qw(&basename &dirname);
+use Cwd;
+
+my $origdir = cwd();
+chdir dirname($0);
+my $name = basename($0, '.PL');
+   $name .= '.com' if $^O eq 'VMS';
+   $name .= '.bat' if $^O eq 'MSWin32';
+open EXE ,">$name" or die "Cannot create $name: $!";
+print "Extracting $name (with variable substitutions)\n";
+print EXE << "!GROK!THIS!";
+$Config{'startperl'}
+!GROK!THIS!
+if ($^O eq 'VMS') {
+print EXE <<'!NO!SUBS!';
+#!/perl
+!NO!SUBS!
+}
+print EXE << '!NO!SUBS!';
 
 $| = 1;
 
-use FindBin;
-use lib "$FindBin::Bin/../lib";
+#use FindBin;
+#use lib "$FindBin::Bin/../";
 use VCS;
+
+if (scalar(@ARGV) == 0) {
+    print << "EOUSAGE";
+Usage:
+
+    diff-hist file [file...]
+EOUSAGE
+    exit;
+}
+
 
 foreach my $arg (@ARGV) {
     my $file = VCS::File->new($arg);
@@ -53,3 +85,6 @@ chronological order.
 =head1 SEE ALSO
 
 L<VCS>.
+
+=cut
+!NO!SUBS!

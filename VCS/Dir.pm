@@ -44,7 +44,7 @@ C<VCS::Dir> abstracts access to a directory under version control.
 
 Methods marked with a "*" are not yet finalised/implemented.
 
-=head2 VCS::Dir->create_new($dir) *
+=head2 VCS::Dir-E<gt>create_new($dir) *
 
 C<$dir> is a directory name, absolute or relative.  Creates data as
 appropriate to convince the VCS that there is a file-container, and
@@ -52,7 +52,7 @@ returns an object of class C<VCS::Dir>, or undef if it fails. This is a
 pure virtual method, which must be over-ridden, and cannot be called
 directly in this class (a C<die> will result).
 
-=head2 VCS::Dir->introduce($name, $create_class) *
+=head2 VCS::Dir-E<gt>introduce($name, $create_class) *
 
 C<$name> is a file or directory name, absolute or relative.
 C<$create_class> is either C<File> or C<Dir>, and implementation
@@ -69,16 +69,16 @@ appropriate create_new:
 This is a pure virtual method, which must be over-ridden, and cannot be
 called directly in this class (a C<die> will result).
 
-=head2 VCS::Dir->new($dir)
+=head2 VCS::Dir-E<gt>new($dir)
 
 C<$dir> is a directory name, absolute or relative.  Returns an object
 of class C<VCS::Dir>, or undef if it fails.
 
-=head2 $dir->name
+=head2 $dir-E<gt>name
 
 Returns the C<$dir> argument to C<new>.
 
-=head2 $dir->content
+=head2 $dir-E<gt>content
 
 Returns a list of objects, either of class C<VCS::Dir> or
 C<VCS::File>, corresponding to files and directories within this
@@ -92,3 +92,5 @@ L<VCS>.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
+
+=cut

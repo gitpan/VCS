@@ -23,25 +23,8 @@ DESCRIPTION
     `VCS::Cvs::File', and `VCS::Cvs::Version', which are subclasses
     of their respective "container" classes.
 
-    The "container" classes work as follows: when the `new' method
-    of a container class is called, it will cycle through each of
-    the known implementation classes, trying its `new' method with
-    the given arguments until one returns a defined result, which
-    will then be returned.
-
-    An implementation class is recognised as follows: its name
-    starts with `VCS::', and `require "VCS/Classname.pm"' will load
-    the appropriate implementation classes corresponding to the
-    container classes.
-
-    In general, implementation classes' `new' methods must be
-    careful not to return "false positives", by rigorously checking
-    if their arguments conform to their particular version control
-    system.
-
-    If a method, or an argument to a method makes no sense for a
-    particular implementation, then the implementation may ignore
-    it, but must do so quietly.
+    `VCS' ships with `VCS::Rcs', `VCS::Cvs', and `VCS::Hms' implementation
+    classes.  Others can be added.
 
 METHODS
   VCS->implementations
@@ -60,24 +43,40 @@ METHODS
 
 AVAILABILITY
     VCS.pm and its friends will be available from CPAN.
+    There is also a Sourceforge project at:
+
+        http://sourceforge.net/projects/vcs/
+
+PREREQUISITE MODULES
+    VCS.pm requires that Sort::Versions be installed.
+
+    The optional vcsweb.cgi program uses the CGI and CGI::Carp modules.
 
 MAILING LIST
-    There is currently a mailing list about VCS.
+    There is currently a mailing list about VCS. Go to the following
+    webpage to subscribe to it:
 
-    To subscribe, send a blank message to: vcs-subscribe@astray.com.
-    To talk, send a message to: vcs@astray.com. To unsubscribe, send
-    a blank message to: vcs-unsubscribe@astray.com.
+        http://www.astray.com/mailman/listinfo/vcs
 
     General queries should be made directly to the mailing list.
 
+    There is a list archive at:
+
+        http://www.astray.com/pipermail/vcs/
+
 COPYRIGHT
-    Copyright (c) 1998/9 Leon Brocard. All rights reserved. This
+    Copyright (c) 1998-2001 Leon Brocard. All rights reserved. This
     program is free software; you can redistribute it and/or modify
     it under the same terms as Perl itself.
 
 SEE ALSO
-    the VCS::Cvs manpage, the VCS::Dir manpage, the VCS::File
-    manpage, the VCS::Rcs manpage, the VCS::Version manpage.
+    the VCS::Cvs pod doc, the VCS::Dir pod doc, the VCS::File
+    pod doc, the VCS::Rcs pod doc, the VCS::Version pod doc, and the
+    VCS_dev.pod pod documentation.
+
+CHANGES FROM 0.03
+    Add Hms.
+    Split out VCS_dev.pod documentation for VCS::* developers.
 
 CHANGES FROM 0.02
     Documentation, mostly. Caching still doesn't work with

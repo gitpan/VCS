@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use FindBin;
-use lib "$FindBin::Bin/../lib";
+use lib "$FindBin::Bin/../";
 use VCS;
 use Getopt::Long;
 use File::Basename;

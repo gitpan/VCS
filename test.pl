@@ -14,7 +14,18 @@ print "ok 1\n";
 
 ######################### End of black magic.
 
-# Insert your test code below (better if it prints "ok 13"
-# (correspondingly "not ok 13") depending on the success of chunk 13
-# of the test code):
+# Insert proper tests here
+exit;
 
+my $filename = 'MANIFEST';
+
+$file = VCS::File->new($filename);
+print $file->name, ":\n";
+for $version ($file->versions) {
+    print
+    $version->version,
+    ' was checked in by ',
+    $version->author,
+    "\n",
+    ;
+}

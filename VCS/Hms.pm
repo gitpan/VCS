@@ -1,14 +1,14 @@
-package VCS::Rcs;
+package VCS::Hms;
 
 use strict;
 use vars qw($VERSION);
-use VCS::Rcs::Dir;
-use VCS::Rcs::File;
-use VCS::Rcs::Version;
+use VCS::Hms::Dir;
+use VCS::Hms::File;
+use VCS::Hms::Version;
 
-$VERSION = '0.04';
+$VERSION = '0.02';
 
-my $LOG_CMD = "rlog";
+my $LOG_CMD = "fhist";
 
 my %LOG_CACHE;
 
@@ -22,7 +22,8 @@ sub _boiler_plate_info {
 sub _split_log {
     my ($self, $version) = @_;
     my $log_text;
-    my $cache_id = $self->name;
+
+    my $cache_id = $self->name . '/' . defined $version ? $version : 'all';
     unless (defined($log_text = $LOG_CACHE{$cache_id})) {
         my $cmd =
             $LOG_CMD .
@@ -31,43 +32,40 @@ sub _split_log {
         $LOG_CACHE{$cache_id} = $log_text = $self->_read_pipe($cmd);
     }
     my @sections = split /\n[=\-]+\n/, $log_text;
-    @sections = ($sections[0], grep {/^revision $version(\n|\s)/} @sections) if $version;
-#map { print "SEC: $_\n" } @sections;
+    #map { print "SEC: $_\n" } @sections;
     @sections;
 }
 
 sub _parse_log_rev {
     my ($self, $text) = @_;
-    my ($rev_line, $blurb, @reason) = split /\n/, $text;
+    my ($rev_line, $blurb, $blurb2, @reason) = split /\n/, $text;
     my %info = map {
-        split /:\s+/
-    } split /;\s*/, $blurb;
+        split /:\s+/,2
+    } split /;\s*/, $blurb.$blurb2,;
     my ($junk, $rev) = split /\s+/, $rev_line;
     $info{'revision'} = $rev;
     $info{'reason'} = \@reason;
-#print "REASON: @reason\n";
-#map { print "$_ => $info{$_}\n" } keys %info;
+    #print "REASON: @reason\n";
+    #map { print "$_ => $info{$_}\n" } keys %info;
     \%info;
 }
 
 sub _parse_log_header {
     my ($self, $text) = @_;
-    $text =~ s#(description:.*)##s;
-    my $desc = join "\n ", split /\n/, $1;
-    $text .= $desc;
     my @parts = $text =~ /^(\S.*?)(?=^\S|\Z)/gms;
     chomp @parts;
-#map { print "PART: $_\n" } @parts;
+    #map { print "PART: $_\n" } @parts;
     my %info = map {
         split /:\s*/, $_, 2
     } @parts;
-#map { print "$_ => $info{$_}\n" } keys %info;
+    #map { print "$_ => $info{$_}\n" } keys %info;
     \%info;
 }
 
 sub _read_pipe {
     my ($self, $cmd) = @_;
     local *PIPE;
+    #print "Pipe : $cmd\n";
     open PIPE, $cmd;
     local $/ = undef;
     my $contents = <PIPE>;
@@ -79,24 +77,23 @@ sub _read_pipe {
 
 =head1 NAME
 
-VCS::Rcs - notes for the rcs implementation
+VCS::Hms - notes for the HMS implementation
 
 =head1 SYNOPSIS
 
     use VCS;
-    $file = VCS::File->new('/source/rcsrepos/project/Makefile');
+    $file = VCS::File->new('Makefile');
 
 =head1 DESCRIPTION
 
 Currently, the user needs to ensure that their environment has the 
-B<rcs> toolset available, including B<rlog>, B<rcsdiff>, B<co>, et al.
+HMS toolset available, including B<fhist>, B<fdiff>, B<fco>, et al.
 On Unix like environments ensure that the C<$PATH> environment variable
-has the appropriate directory listed.  On Windows be sure that the C<%PATH%>
-variable has the directory with B<rlog.exe> etc. in it.
+has the appropriate directory listed.
 
 =head1 AVAILABILITY
 
-VCS::Rcs is currently part of the main VCS distribution.
+VCS::Hms is currently part of the main VCS distribution.
 
 =head1 COPYRIGHT
 
