@@ -1,5 +1,8 @@
 Revision history for Perl extension VCS.
 
+0.15  Sun Aug 22 01:37:00 PDT 2010
+	- VCS is obsolete, use VCI instead.
+
 0.14  Tue Sep 14 11:21:16 BST 2004
 	- Fixed a test, got shocked at how long this has been dormant.
 	  (thanks to richard for reporting the test failure on some

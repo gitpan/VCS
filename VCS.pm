@@ -9,7 +9,7 @@ use VCS::File;
 use VCS::Version;
 use URI;
 
-$VERSION = '0.14';
+$VERSION = '0.15';
 
 sub parse_url {
     # vcs://hostname/classname/...
@@ -40,7 +40,7 @@ __END__
 
 =head1 NAME
 
-VCS - Library for generic Version Control System access in Perl
+VCS - (OBSOLETE: USE VCI INSTEAD) Version Control System access in Perl
 
 =head1 SYNOPSIS
 
@@ -55,6 +55,10 @@ VCS - Library for generic Version Control System access in Perl
     }
 
 =head1 DESCRIPTION
+
+B<NOTE:> This module has been unmaintained since 2004. It is recommended that
+you use the L<VCI> module instead, which is currently maintained, supports
+many more VCSes, and has more features.
 
 C<VCS> is an API for abstracting access to all version control systems
 from Perl code. This is achieved in a similar fashion to the C<DBI>
@@ -173,5 +177,7 @@ reserved. This program is free software; you can redistribute it
 and/or modify it under the same terms as Perl itself.
 
 =head1 SEE ALSO
+
+L<VCI>
 
 L<VCS::Cvs>, L<VCS::Dir>, L<VCS::File>, L<VCS::Rcs>, L<VCS::Version>.
