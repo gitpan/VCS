@@ -1,7 +1,7 @@
 --- #YAML:1.0
 name:                VCS
-version:             0.15
-abstract:            (OBSOLETE: USE VCI INSTEAD) Version Control System access in Perl
+version:             0.16
+abstract:            (OBSOLETE, USE VCI INSTEAD) Version Control System access in Perl
 license:             ~
 author:              ~
 generated_by:        ExtUtils::MakeMaker version 6.42

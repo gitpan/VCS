@@ -9,7 +9,7 @@ use VCS::File;
 use VCS::Version;
 use URI;
 
-$VERSION = '0.15';
+$VERSION = '0.16';
 
 sub parse_url {
     # vcs://hostname/classname/...
@@ -40,7 +40,7 @@ __END__
 
 =head1 NAME
 
-VCS - (OBSOLETE: USE VCI INSTEAD) Version Control System access in Perl
+VCS - (OBSOLETE, USE VCI INSTEAD) Version Control System access in Perl
 
 =head1 SYNOPSIS
 

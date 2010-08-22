@@ -1,5 +1,8 @@
 Revision history for Perl extension VCS.
 
+0.16  Sun Aug 22 10:04:00 PDT 2010
+	- Fix META.yml
+
 0.15  Sun Aug 22 01:37:00 PDT 2010
 	- VCS is obsolete, use VCI instead.
 
