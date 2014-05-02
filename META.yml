@@ -1,13 +1,19 @@
---- #YAML:1.0
-name:                VCS
-version:             0.16
-abstract:            (OBSOLETE, USE VCI INSTEAD) Version Control System access in Perl
-license:             ~
-author:              ~
-generated_by:        ExtUtils::MakeMaker version 6.42
-distribution_type:   module
-requires:     
-    URI:                           0
+---
+abstract: 'Version Control System access in Perl'
+author:
+  - unknown
+build_requires: {}
+dynamic_config: 1
+generated_by: 'ExtUtils::MakeMaker version 6.66, CPAN::Meta::Converter version 2.120921'
+license: unknown
 meta-spec:
-    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
-    version: 1.3
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: VCS
+no_index:
+  directory:
+    - t
+    - inc
+resources:
+  repository: https://github.com/mohawk2/cpan-vcs.git
+version: 0.17

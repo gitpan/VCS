@@ -9,7 +9,7 @@ use VCS::File;
 use VCS::Version;
 use URI;
 
-$VERSION = '0.16';
+$VERSION = '0.17';
 
 sub parse_url {
     # vcs://hostname/classname/...
@@ -40,7 +40,7 @@ __END__
 
 =head1 NAME
 
-VCS - (OBSOLETE, USE VCI INSTEAD) Version Control System access in Perl
+VCS - Version Control System access in Perl
 
 =head1 SYNOPSIS
 
@@ -55,10 +55,6 @@ VCS - (OBSOLETE, USE VCI INSTEAD) Version Control System access in Perl
     }
 
 =head1 DESCRIPTION
-
-B<NOTE:> This module has been unmaintained since 2004. It is recommended that
-you use the L<VCI> module instead, which is currently maintained, supports
-many more VCSes, and has more features.
 
 C<VCS> is an API for abstracting access to all version control systems
 from Perl code. This is achieved in a similar fashion to the C<DBI>
@@ -127,39 +123,11 @@ Please refer to the documentation for L<VCS::Dir>, L<VCS::File>,
 and L<VCS::Version>; as well as the implementation specific documentation
 as in L<VCS::Cvs>, L<VCS::Rcs>.
 
-=head1 AVAILABILITY
-
-Much of this information is incorrect, the current up to date
-version of VCS is held on a different CVS server now, i'm going
-to make things a little more public and then update the below
-information - thanks for your patience.
-
-VCS.pm and its friends are available from CPAN.  There is a web page
-at:
-
-    http://www.astray.com/VCS/
-
-as well as a sourceforge project page at:
-
-    http://sourceforge.net/projects/vcs/
-
-=head1 MAILING LIST
-
-There is currently a mailing list about VCS. Go to the following
-webpage to subscribe to it:
-
-    http://www.astray.com/mailman/listinfo/vcs
-
-There is a web archive of the mailing list at:
-
-    http://www.astray.com/pipermail/vcs/
-
-General queries should be made directly to the mailing list.
-
 =head1 AUTHORS
 
-Greg McCarroll <greg@mccarroll.org.uk>
-Leon Brocard
+  Greg McCarroll <greg@mccarroll.org.uk>
+  Leon Brocard
+  Ed J
 
 =head1 KUDOS
 
@@ -169,7 +137,6 @@ Thanks to the following for patches,
     Pierre Denis
     Slaven Rezic
 
-
 =head1 COPYRIGHT
 
 Copyright (c) 1998-2003 Leon Brocard & Greg McCarroll. All rights
@@ -177,7 +144,5 @@ reserved. This program is free software; you can redistribute it
 and/or modify it under the same terms as Perl itself.
 
 =head1 SEE ALSO
-
-L<VCI>
 
 L<VCS::Cvs>, L<VCS::Dir>, L<VCS::File>, L<VCS::Rcs>, L<VCS::Version>.

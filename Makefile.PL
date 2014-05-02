@@ -23,4 +23,15 @@ WriteMakefile(
     'PL_FILES'      => $PL_FILES,
     'EXE_FILES'     => $EXE_FILES,
     'dist'          => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
+    realclean       => { FILES => "examples/diff-hist$exe_type" },
+    META_MERGE => {
+      "meta-spec" => { version => 2 },
+      resources => {
+	repository => {
+	  type => 'git',
+	  url => 'https://github.com/mohawk2/cpan-vcs.git',
+	  web => 'https://github.com/mohawk2/cpan-vcs',
+	},
+      },
+    },
 );

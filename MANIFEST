@@ -32,3 +32,4 @@ t/rcs_testfiles/dir/RCS/file,v_for_testing
 t/cvs_testfiles/td/dir/file,v_for_testing
 
 META.yml                                 Module meta-data (added by MakeMaker)
+META.json                                Module JSON meta-data (added by MakeMaker)
