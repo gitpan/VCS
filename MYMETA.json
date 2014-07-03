@@ -4,7 +4,7 @@
       "unknown"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "ExtUtils::MakeMaker version 6.66, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "ExtUtils::MakeMaker version 6.98, CPAN::Meta::Converter version 2.140640",
    "license" : [
       "unknown"
    ],
@@ -19,6 +19,23 @@
          "inc"
       ]
    },
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "URI" : "0"
+         }
+      }
+   },
    "release_status" : "stable",
    "resources" : {
       "repository" : {
@@ -27,5 +44,5 @@
          "web" : "https://github.com/mohawk2/cpan-vcs"
       }
    },
-   "version" : "0.18"
+   "version" : "0.19"
 }
