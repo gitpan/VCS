@@ -5,7 +5,7 @@ use VCS::File;
 use VCS::Version;
 use URI;
 
-our $VERSION = '0.19';
+our $VERSION = '0.20';
 
 sub parse_url {
     # vcs://hostname/classname/...
